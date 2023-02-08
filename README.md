@@ -1,7 +1,7 @@
 # PSS Revive
 This project's target is to produce a librarian/editor for Yamaha PSS x80 synths.
 
-
+![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev.png)
 
 ## ToDo
 - MIDI Input
@@ -22,6 +22,8 @@ External components needed to build the MiniDexed Control Center are available t
 - ATShapeLine
 - EyeCandyControls
 - HashLib4Pascal
+- TAChart
+- BGRA Controls
 
 ## Linux notes
 libQt5pas distributed with Ubuntu and derivates is know to cause problems. 
