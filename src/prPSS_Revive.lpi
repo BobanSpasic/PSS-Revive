@@ -20,7 +20,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <BuildNr Value="5"/>
-      <StringTable FileDescription="DX Control Center" LegalCopyright="Boban Spasic" OriginalFilename="DXCC.exe"/>
+      <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Debug" Default="True"/>
@@ -32,7 +32,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\bin\FreeBSD_Qt5\PSS-Revive"/>
+            <Filename Value="..\bin\FreeBSD_Qt5\PSS_Revive.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -159,7 +159,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\bin\Debug\PSS-Revive.exe"/>
+      <Filename Value="..\bin\Debug\PSS_Revive.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
