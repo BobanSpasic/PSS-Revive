@@ -7,7 +7,7 @@
  Author: Boban Spasic
 
 }
-//ToDo GUIToVoice
+//ToDo DB and Edit auto preview
 //ToDo MIDI Receive
 //ToDo Save SysEx - bank or single voices
 
@@ -40,9 +40,9 @@ type
   { TfrmMain }
 
   TfrmMain = class(TForm)
+    btDeleteVoiceDB: TButton;
     btSelectDir: TECSpeedBtnPlus;
     btSelSDCard: TECSpeedBtnPlus;
-    btDeleteVoiceDB: TButton;
     CarrierRR: TLineSeries;
     CarrierSRR: TLineSeries;
     cbAutoPreview: TCheckBox;
@@ -61,6 +61,16 @@ type
     imLogo: TImage;
     imLKS_HI: TImage;
     imLKS_LO: TImage;
+    lbMod: TLabel;
+    lbCredits1: TLabel;
+    lbFontSize: TLabel;
+    lbMidiIn: TLabel;
+    lbMidiOut: TLabel;
+    lbCar: TLabel;
+    lbPopUpDur: TLabel;
+    lnkCredits1: TECLink;
+    lnkCredits2: TECLink;
+    lnkCredits3: TECLink;
     MaskEdit1: TMaskEdit;
     MaskEdit10: TMaskEdit;
     MaskEdit11: TMaskEdit;
@@ -95,11 +105,18 @@ type
     MaskEdit7: TMaskEdit;
     MaskEdit8: TMaskEdit;
     MaskEdit9: TMaskEdit;
+    mmLogSettings: TMemo;
     ModulatorRR: TLineSeries;
     ModulatorSRR: TLineSeries;
+    pnCredits: TPanel;
     S: TECSlider;
     AMS: TECSlider;
-    BANK: TECSlider;
+    seFontSize: TSpinEdit;
+    sePopUpDur: TSpinEdit;
+    slGen: TShapeLine;
+    slMod: TShapeLine;
+    slCar: TShapeLine;
+    tsSettings: TTabSheet;
     VDT: TECSlider;
     PMS: TECSlider;
     V: TECSlider;
@@ -109,7 +126,6 @@ type
     edSlot03: TLabeledEdit;
     edSlot04: TLabeledEdit;
     edSlot05: TLabeledEdit;
-    lbPopUpDur: TLabel;
     C_AM_EN: TECSlider;
     C_AR: TECSlider;
     C_D1L: TECSlider;
@@ -146,28 +162,16 @@ type
     pnSlot03: TPanel;
     pnSlot04: TPanel;
     pnSlot05: TPanel;
-    sePopUpDur: TSpinEdit;
     tbBank: TToolBar;
     tbbtSaveBank: TToolButton;
     tbbtSendVoiceDump: TToolButton;
     tbSearch: TEdit;
-    lbCredits1: TLabel;
-    lbFontSize: TLabel;
     lbFiles: TListBox;
-    lbMidiIn: TLabel;
-    lbMidiOut: TLabel;
     lbVoices: TListBox;
-    lnkCredits1: TECLink;
-    lnkCredits2: TECLink;
-    lnkCredits3: TECLink;
-    mmLog: TMemo;
-    mmLogSettings: TMemo;
     tbpnSearch: TPanel;
-    pnCredits: TPanel;
     pcFilesDatabase: TPageControl;
     pcMain: TPageControl;
     pnBankSlots: TPanel;
-    pnExplorer: TPanel;
     pnFileManager: TPanel;
     pnVoiceManager: TPanel;
     ilToolbarBankPerformance: TImageList;
@@ -175,7 +179,6 @@ type
     SelectSysExDirectoryDialog1: TSelectDirectoryDialog;
     sl3: TShapeLine;
     sl4: TShapeLine;
-    seFontSize: TSpinEdit;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     sgDB: TStringGrid;
@@ -192,7 +195,6 @@ type
     tsFiles: TTabSheet;
     tsDatabase: TTabSheet;
     tsLibrarian: TTabSheet;
-    tsSettings: TTabSheet;
     procedure btDeleteVoiceDBClick(Sender: TObject);
     procedure btSelectDirClick(Sender: TObject);
     procedure cbMidiInChange(Sender: TObject);
@@ -237,6 +239,7 @@ type
     procedure tbStoreToDBClick(Sender: TObject);
     procedure SendSimpleMelody(aCh: integer);
     procedure VoiceToGUI(aVoiceNr: integer);
+    procedure GUIToVoice(aVoiceNr: integer);
     procedure RefreshGraph;
     function LoadVoiceNames(aSysExName: string): boolean;
     function SaveVoiceNames(aSysExName: string): boolean;
@@ -380,7 +383,6 @@ begin
   if SelectSysExDirectoryDialog1.Execute then
   begin
     lbVoices.Clear;
-    mmLog.Lines.Clear;
     edbtSelSysExDir.Text := SelectSysExDirectoryDialog1.FileName;
     LastSysExOpenDir := IncludeTrailingPathDelimiter(
       SelectSysExDirectoryDialog1.FileName);
@@ -554,6 +556,7 @@ begin
     if (lbVoices.ItemIndex = -1) or (lbFiles.ItemIndex = -1) then Exit;
     FTmpVoice.InitVoice;
     FTmpBank.GetVoice(lbVoices.ItemIndex + 1, FTmpVoice);
+    //FTmpVoice.FPSSx80_VCED_Params.BANK := (Sender as TLabeledEdit).Tag;
     FBank.SetVoice((Sender as TLabeledEdit).Tag, FTmpVoice);
     FBank.SetVoiceName((Sender as TLabeledEdit).Tag,
       FTmpBank.GetVoiceName(lbVoices.ItemIndex + 1));
@@ -674,7 +677,6 @@ begin
     end;
   end;
 
-  pcMain.ActivePage := tsLibrarian;
   pcFilesDatabase.ActivePage := tsFiles;
 
   FMidiIsActive := False;
@@ -797,6 +799,7 @@ var
   Itm: string;
   isBank: boolean;
 begin
+  isBank := False;
   Itm := HomeDir + 'lastState.syx';
   if FileExists(itm) then
   begin
@@ -835,7 +838,6 @@ begin
     LastSysEx := itm;
     dbg := IncludeTrailingPathDelimiter(edbtSelSysExDir.Text) + Itm;
     lbVoices.Clear;
-    mmLog.Lines.Clear;
     OpenSysEx(dbg);
     if (lastClickedFile <> -1) and ((lastClickedFile) < lbFiles.Items.Count) then
       lbFiles.ItemIndex := lastClickedFile;
@@ -856,7 +858,6 @@ begin
     LastSysEx := itm;
     dbg := IncludeTrailingPathDelimiter(edbtSelSysExDir.Text) + Itm;
     lbVoices.Clear;
-    mmLog.Lines.Clear;
     OpenSysEx(dbg);
     if (lastClickedFile <> -1) and ((lastClickedFile) < lbFiles.Items.Count) then
       lbFiles.ItemIndex := lastClickedFile;
@@ -959,9 +960,9 @@ begin
   if aName = '' then exit;
   if FileExists(aName) then
   begin
+    isBank := False;
     dmp := TMemoryStream.Create;
     dmp.LoadFromFile(aName);
-    mmLog.Lines.Clear;
     fName := ExtractFileNameWithoutExt(ExtractFileNameOnly(aName));
     i := 0;
     if ContainsPSSx80Data(dmp, i, isBank) then
@@ -1211,8 +1212,6 @@ var
 begin
   FTmpVoice.Set_VCED_Params(FBank.GetVCED(aVoiceNr));
 
-  BANK.Position := FTmpVoice.Get_VCED_Params.BANK;
-
   M_MUL.Position := FTmpVoice.Get_VCED_Params.M_MUL;
   //ToDo check if DT1 is OK
   dtSgn := FTmpVoice.Get_VCED_Params.M_DT1 and 8;
@@ -1266,6 +1265,57 @@ begin
     begin
       SliderLinkedEdit(pnBankSlots.Controls[i] as TECSlider);
     end;
+end;
+
+procedure TfrmMain.GUIToVoice(aVoiceNr: integer);
+var
+  dtSgn: integer;
+  dtVal: integer;
+begin
+  FTmpVoice.FPSSx80_VCED_Params.M_MUL := trunc(M_MUL.Position);
+  if M_DT1.Position < 0 then dtSgn:= 8 else dtSgn := 0;
+  dtVal := trunc(M_DT1.Position) + dtSgn;
+  FTmpVoice.FPSSx80_VCED_Params.M_DT1 := dtVal;
+  FTmpVoice.FPSSx80_VCED_Params.M_DT2:= trunc(M_DT2.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_SIN_TBL := trunc(M_SIN_TBL.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_AM_EN := trunc(M_AM_EN.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_AR  := trunc(M_AR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D1R  := trunc(M_D1R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D1L  := trunc(M_D1L.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D2R  := trunc(M_D2R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_RR  := trunc(M_RR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_SRR  := trunc(M_SRR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_RKS  := trunc(M_RKS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_LKS_LO  := trunc(M_LKS_LO.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_LKS_HI  := trunc(M_LKS_HI.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_FB  := trunc(M_FB.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_TL  := 99 - trunc(M_TL.Position);
+
+  FTmpVoice.FPSSx80_VCED_Params.C_MUL := trunc(C_MUL.Position);
+  if C_DT1.Position < 0 then dtSgn:= 8 else dtSgn := 0;
+  dtVal := trunc(C_DT1.Position) + dtSgn;
+  FTmpVoice.FPSSx80_VCED_Params.C_DT1 := dtVal;
+  FTmpVoice.FPSSx80_VCED_Params.C_DT2:= trunc(C_DT2.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_SIN_TBL := trunc(C_SIN_TBL.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_AM_EN := trunc(C_AM_EN.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_AR  := trunc(C_AR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D1R  := trunc(C_D1R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D1L  := trunc(C_D1L.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D2R  := trunc(C_D2R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_RR  := trunc(C_RR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_SRR  := trunc(C_SRR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_RKS  := trunc(C_RKS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_LKS_LO  := trunc(C_LKS_LO.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_LKS_HI  := trunc(C_LKS_HI.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_TL  := 99 - trunc(C_TL.Position);
+
+  FTmpVoice.FPSSx80_VCED_Params.PMS  := trunc(PMS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.AMS  := trunc(AMS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.VDT  := trunc(VDT.Position);
+  FTmpVoice.FPSSx80_VCED_Params.V  := trunc(V.Position);
+  FTmpVoice.FPSSx80_VCED_Params.S  := trunc(S.Position);
+
+  FBank.SetVoice(aVoiceNr, FTmpVoice);
 end;
 
 function TfrmMain.LoadVoiceNames(aSysExName: string): boolean;

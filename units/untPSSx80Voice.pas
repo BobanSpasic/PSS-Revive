@@ -119,10 +119,11 @@ type
 type
   TPSSx80VoiceContainer = class(TPersistent)
   private
-    FPSSx80_VCED_Params: TPSSx80_VCED_Params;
+    //FPSSx80_VCED_Params: TPSSx80_VCED_Params;
     FPSSx80_VMEM_Params: TPSSx80_VMEM_Params;
     FPSSx80_VoiceName: string;
   public
+    FPSSx80_VCED_Params: TPSSx80_VCED_Params;
     function Load_VMEM_FromStream(var aStream: TMemoryStream;
       Position: integer): boolean;
     procedure InitVoice; //set defaults

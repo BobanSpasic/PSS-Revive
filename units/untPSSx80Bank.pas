@@ -90,9 +90,10 @@ end;
 function TPSSx80BankContainer.SetVoice(aVoiceNr: integer;
   var FPSSx80Voice: TPSSx80VoiceContainer): boolean;
 begin
-  if (aVoiceNr > 0) and (aVoiceNr < 33) then
+  if (aVoiceNr > 0) and (aVoiceNr < 6) then
   begin
     FPSSx80BankParams[aVoiceNr].Set_VMEM_Params(FPSSx80Voice.Get_VMEM_Params);
+    FPSSx80BankParams[aVoiceNr].FPSSx80_VCED_Params.BANK:=aVoiceNr;
     Result := True;
   end
   else
@@ -112,7 +113,10 @@ begin
     for  i := 1 to 5 do
     begin
       if assigned(FPSSx80BankParams[i]) then
+      begin
         FPSSx80BankParams[i].Load_VMEM_FromStream(aStream, aStream.Position);
+        FPSSx80BankParams[i].FPSSx80_VCED_Params.BANK := i;
+      end;
     end;
   except
 

@@ -9,7 +9,8 @@ uses
   athreads,
       {$ENDIF}
   Forms,
-  tachartlazaruspkg, tachartbgra,
+  tachartlazaruspkg,
+  tachartbgra,
   Interfaces, // this includes the LCL widgetset
   untMain,
   untMiniINI,

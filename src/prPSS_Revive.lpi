@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="5"/>
+      <BuildNr Value="6"/>
       <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive"/>
     </VersionInfo>
     <BuildModes>
@@ -32,7 +32,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\bin\FreeBSD_Qt5\PSS_Revive.exe"/>
+            <Filename Value="..\bin\FreeBSD_Qt5\PSS_Revive"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
