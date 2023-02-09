@@ -18,7 +18,7 @@ FreeBSD - Libc6, sqlite3, portmidi, Qt5Pas and optional alsa_seq_server to acces
 ## Compiling
 Developed by using [Lazarus/Freepascal.](https://www.lazarus-ide.org/)
 
-External components needed to build the MiniDexed Control Center are available through Lazarus OPM (Online Package Manager):
+External components needed to build the PSS Revive are available through Lazarus OPM (Online Package Manager):
 - ATShapeLine
 - EyeCandyControls
 - HashLib4Pascal
