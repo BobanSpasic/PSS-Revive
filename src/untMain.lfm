@@ -1,12 +1,13 @@
 object frmMain: TfrmMain
   Left = 317
-  Height = 859
+  Height = 700
   Top = 139
   Width = 1494
   Caption = 'PSS Revive'
-  ClientHeight = 859
+  ClientHeight = 700
   ClientWidth = 1494
   Color = clWhite
+  Constraints.MinHeight = 700
   Font.Height = 11
   Font.Name = 'Consolas'
   FormStyle = fsStayOnTop
@@ -15,42 +16,36 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '2.2.4.0'
-  object Splitter2: TSplitter
-    Left = 680
-    Height = 859
-    Top = 0
-    Width = 8
-  end
   object pcFilesDatabase: TPageControl
     Left = 0
-    Height = 859
+    Height = 700
     Top = 0
-    Width = 680
+    Width = 688
     ActivePage = tsFiles
-    Align = alLeft
+    Align = alClient
     TabIndex = 0
-    TabOrder = 2
+    TabOrder = 1
     object tsFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 835
-      ClientWidth = 672
+      ClientHeight = 676
+      ClientWidth = 680
       object pnFileManager: TPanel
         Left = 0
-        Height = 835
+        Height = 676
         Top = 0
-        Width = 280
+        Width = 360
         Align = alLeft
         BevelColor = clBlack
         ChildSizing.LeftRightSpacing = 10
         ChildSizing.TopBottomSpacing = 5
-        ClientHeight = 835
-        ClientWidth = 280
+        ClientHeight = 676
+        ClientWidth = 360
         TabOrder = 0
         object lbFiles: TListBox
           Left = 11
-          Height = 782
+          Height = 623
           Top = 47
-          Width = 258
+          Width = 338
           Align = alClient
           BorderStyle = bsNone
           Color = clNone
@@ -67,7 +62,7 @@ object frmMain: TfrmMain
           Left = 11
           Height = 10
           Top = 37
-          Width = 258
+          Width = 338
           Align = alTop
           LineColor = clBlack
           ArrowColor = clBlack
@@ -77,7 +72,7 @@ object frmMain: TfrmMain
           Left = 11
           Height = 10
           Top = 6
-          Width = 258
+          Width = 338
           Align = alTop
           LineColor = clBlack
           ArrowColor = clBlack
@@ -88,7 +83,7 @@ object frmMain: TfrmMain
           Height = 21
           Hint = 'Select directory'
           Top = 16
-          Width = 247
+          Width = 327
           Button.Width = 21
           Button.GlyphDesign = egdList
           Button.OnClick = btSelectDirClick
@@ -103,28 +98,28 @@ object frmMain: TfrmMain
         end
       end
       object Splitter1: TSplitter
-        Left = 280
-        Height = 835
+        Left = 360
+        Height = 676
         Top = 0
         Width = 8
       end
       object pnVoiceManager: TPanel
-        Left = 288
-        Height = 835
+        Left = 368
+        Height = 676
         Top = 0
-        Width = 384
+        Width = 312
         Align = alClient
         BevelColor = clBlack
         ChildSizing.LeftRightSpacing = 10
         ChildSizing.TopBottomSpacing = 5
-        ClientHeight = 835
-        ClientWidth = 384
+        ClientHeight = 676
+        ClientWidth = 312
         TabOrder = 2
         object lbVoices: TListBox
           Left = 11
-          Height = 823
+          Height = 664
           Top = 6
-          Width = 362
+          Width = 290
           Align = alClient
           BorderStyle = bsNone
           Color = clNone
@@ -139,13 +134,13 @@ object frmMain: TfrmMain
     end
     object tsDatabase: TTabSheet
       Caption = 'Database'
-      ClientHeight = 835
-      ClientWidth = 672
+      ClientHeight = 676
+      ClientWidth = 680
       object sgDB: TStringGrid
         Left = 0
-        Height = 807
+        Height = 648
         Top = 28
-        Width = 672
+        Width = 680
         Align = alClient
         AutoFillColumns = True
         ColCount = 2
@@ -153,7 +148,7 @@ object frmMain: TfrmMain
         Columns = <        
           item
             Title.Caption = 'Voice'
-            Width = 668
+            Width = 659
           end        
           item
             ReadOnly = True
@@ -172,7 +167,7 @@ object frmMain: TfrmMain
         OnEditingDone = sgDBEditingDone
         OnStartDrag = sgDBStartDrag
         ColWidths = (
-          668
+          659
           0
         )
       end
@@ -180,7 +175,7 @@ object frmMain: TfrmMain
         Left = 0
         Height = 28
         Top = 0
-        Width = 672
+        Width = 680
         ButtonHeight = 24
         ButtonWidth = 24
         Caption = 'Database'
@@ -284,8 +279,8 @@ object frmMain: TfrmMain
     end
     object tsSettings: TTabSheet
       Caption = 'Settings'
-      ClientHeight = 835
-      ClientWidth = 672
+      ClientHeight = 676
+      ClientWidth = 680
       object lbMidiIn: TLabel
         AnchorSideLeft.Control = cbMidiIn
         AnchorSideBottom.Control = cbMidiIn
@@ -317,8 +312,8 @@ object frmMain: TfrmMain
       object mmLogSettings: TMemo
         Left = 0
         Height = 90
-        Top = 745
-        Width = 672
+        Top = 586
+        Width = 680
         Align = alBottom
         ReadOnly = True
         ScrollBars = ssAutoBoth
@@ -372,12 +367,12 @@ object frmMain: TfrmMain
         ParentColor = False
       end
       object btDeleteVoiceDB: TButton
+        AnchorSideLeft.Control = cbMidiIn
         AnchorSideRight.Side = asrBottom
-        Left = 239
+        Left = 40
         Height = 21
-        Top = 352
-        Width = 121
-        Anchors = [akTop, akLeft, akRight]
+        Top = 200
+        Width = 100
         Caption = 'Clear Voices DB'
         OnClick = btDeleteVoiceDBClick
         TabOrder = 4
@@ -385,24 +380,11 @@ object frmMain: TfrmMain
       object pnCredits: TPanel
         Left = 40
         Height = 138
-        Top = 544
+        Top = 440
         Width = 320
         ClientHeight = 138
         ClientWidth = 320
         TabOrder = 5
-        object lnkCredits1: TECLink
-          AnchorSideLeft.Control = lbMidiIn
-          Left = 16
-          Height = 11
-          Hint = 'https://github.com/probonopd/MiniDexed'
-          Top = 24
-          Width = 45
-          Caption = 'MiniDexed'
-          ColorHovered = clActiveCaption
-          ParentShowHint = False
-          ShowHint = True
-          OnClick = lnkCreditsClick
-        end
         object lbCredits1: TLabel
           Left = 148
           Height = 11
@@ -467,16 +449,19 @@ object frmMain: TfrmMain
   end
   object pnBankSlots: TPanel
     Left = 688
-    Height = 859
+    Height = 700
     Top = 0
     Width = 806
-    Align = alClient
+    Align = alRight
     BevelColor = clBlack
-    ClientHeight = 859
+    ClientHeight = 700
     ClientWidth = 806
+    Constraints.MinHeight = 695
+    Constraints.MinWidth = 800
     TabOrder = 0
     object pnSlot01: TPanel
       Tag = 1
+      Cursor = crHandPoint
       Left = 16
       Height = 20
       Top = 56
@@ -507,9 +492,22 @@ object frmMain: TfrmMain
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
       end
+      object alBank1: TAdvLed
+        AnchorSideLeft.Control = edSlot01
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edSlot01
+        AnchorSideTop.Side = asrCenter
+        Left = 170
+        Height = 24
+        Top = -2
+        Width = 24
+        Kind = lkGreenLight
+        BorderSpacing.Left = 20
+      end
     end
     object pnSlot02: TPanel
       Tag = 2
+      Cursor = crHandPoint
       Left = 16
       Height = 20
       Top = 86
@@ -539,9 +537,22 @@ object frmMain: TfrmMain
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
       end
+      object alBank2: TAdvLed
+        AnchorSideLeft.Control = edSlot02
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edSlot02
+        AnchorSideTop.Side = asrCenter
+        Left = 170
+        Height = 24
+        Top = -2
+        Width = 24
+        Kind = lkGreenLight
+        BorderSpacing.Left = 20
+      end
     end
     object pnSlot03: TPanel
       Tag = 3
+      Cursor = crHandPoint
       Left = 16
       Height = 20
       Top = 116
@@ -572,9 +583,22 @@ object frmMain: TfrmMain
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
       end
+      object alBank3: TAdvLed
+        AnchorSideLeft.Control = edSlot03
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edSlot03
+        AnchorSideTop.Side = asrCenter
+        Left = 170
+        Height = 24
+        Top = -2
+        Width = 24
+        Kind = lkGreenLight
+        BorderSpacing.Left = 20
+      end
     end
     object pnSlot04: TPanel
       Tag = 4
+      Cursor = crHandPoint
       Left = 16
       Height = 20
       Top = 146
@@ -605,9 +629,22 @@ object frmMain: TfrmMain
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
       end
+      object alBank4: TAdvLed
+        AnchorSideLeft.Control = edSlot04
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edSlot04
+        AnchorSideTop.Side = asrCenter
+        Left = 170
+        Height = 24
+        Top = -2
+        Width = 24
+        Kind = lkGreenLight
+        BorderSpacing.Left = 20
+      end
     end
     object pnSlot05: TPanel
       Tag = 5
+      Cursor = crHandPoint
       Left = 16
       Height = 20
       Top = 176
@@ -637,6 +674,18 @@ object frmMain: TfrmMain
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
+      end
+      object alBank5: TAdvLed
+        AnchorSideLeft.Control = edSlot05
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = edSlot05
+        AnchorSideTop.Side = asrCenter
+        Left = 170
+        Height = 24
+        Top = -2
+        Width = 24
+        Kind = lkGreenLight
+        BorderSpacing.Left = 20
       end
     end
     object tbBank: TToolBar
@@ -2031,6 +2080,7 @@ object frmMain: TfrmMain
       TabOrder = 42
       object imLKS_LO: TImage
         AnchorSideLeft.Side = asrBottom
+        Cursor = crHandPoint
         Left = 3
         Height = 140
         Top = 0
@@ -2043,6 +2093,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Control = imLKS_LO
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = imLKS_LO
+        Cursor = crHandPoint
         Left = 143
         Height = 140
         Top = 0
@@ -2092,27 +2143,28 @@ object frmMain: TfrmMain
         )
         object ModulatorRR: TLineSeries
           Legend.Visible = False
-          LinePen.Color = clSkyBlue
+          LinePen.Color = clRed
           LinePen.Width = 3
         end
         object ModulatorSRR: TLineSeries
           Legend.Visible = False
-          LinePen.Color = clSkyBlue
+          LinePen.Color = clRed
           LinePen.Style = psDash
           LinePen.Width = 3
         end
         object CarrierRR: TLineSeries
           Legend.Visible = False
-          LinePen.Color = 5443568
+          LinePen.Color = clSkyBlue
           LinePen.Width = 3
         end
         object CarrierSRR: TLineSeries
           Legend.Visible = False
-          LinePen.Color = 5443568
+          LinePen.Color = clSkyBlue
           LinePen.Style = psDash
           LinePen.Width = 3
         end
         object Divider: TLineSeries
+          Legend.Visible = False
         end
       end
     end
@@ -2134,7 +2186,7 @@ object frmMain: TfrmMain
     object imLogo: TImage
       Left = 392
       Height = 123
-      Top = 712
+      Top = 553
       Width = 399
       Anchors = [akRight, akBottom]
       Picture.Data = {
@@ -4002,6 +4054,15 @@ object frmMain: TfrmMain
       ArrowColor = clBlack
       LineWidth = 2
     end
+    object btStore: TButton
+      Left = 256
+      Height = 25
+      Top = 552
+      Width = 75
+      Caption = 'Store'
+      OnClick = btStoreClick
+      TabOrder = 78
+    end
   end
   object SelectSysExDirectoryDialog1: TSelectDirectoryDialog
     Left = 560
@@ -4234,7 +4295,7 @@ object frmMain: TfrmMain
   object SaveBankDialog1: TSaveDialog
     Title = 'Save bank as'
     DefaultExt = '.syx'
-    Filter = '*.syx|*.syx'
+    Filter = 'PSS x80 5-Bank dump|*.syx'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
     Left = 592
   end

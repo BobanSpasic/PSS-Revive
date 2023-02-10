@@ -17,7 +17,7 @@ unit untUtils;
 interface
 
 uses
-  Classes, LazFileUtils, SysUtils;
+  Classes, LazFileUtils, SysUtils, strUtils;
 
 procedure FindSYX(Directory: string; var sl: TStringList);
 procedure FindPERF(Directory: string; var sl: TStringList);
@@ -25,6 +25,7 @@ procedure Unused(const A1);
 procedure Unused(const A1, A2);
 procedure Unused(const A1, A2, A3);
 function SameArrays(var a1, a2: array of byte): boolean;
+function ShortenFileName(aFileName: string): string;
 
 implementation
 
@@ -73,6 +74,20 @@ begin
   while (i <= High(a1)) and (a1[i] = a2[i]) do
     Inc(i);
   Result := i >= High(a1);
+end;
+
+function ShortenFileName(aFileName: string): string;
+var
+  dlmtCounter: integer;
+  i: integer;
+begin
+  dlmtCounter:=0;
+  Result := '';
+  for i := 1 to Length(aFileName) do
+  if (aFileName[i] = '/') or (aFileName[i] = '\') then inc(dlmtCounter);
+  Result := copy(aFileName, 1, NPos(PathDelim, aFileName, 2));
+  Result := Result + '...';
+  Result := Result + copy(aFileName, NPos(PathDelim, aFileName, dlmtCounter - 2), Length(aFileName));
 end;
 
 end.

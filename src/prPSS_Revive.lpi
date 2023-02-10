@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="8"/>
       <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive"/>
     </VersionInfo>
     <BuildModes>
@@ -71,6 +71,9 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="industrial"/>
+      </Item>
       <Item>
         <PackageName Value="TAChartBgra"/>
       </Item>

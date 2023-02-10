@@ -93,7 +93,7 @@ begin
   if (aVoiceNr > 0) and (aVoiceNr < 6) then
   begin
     FPSSx80BankParams[aVoiceNr].Set_VMEM_Params(FPSSx80Voice.Get_VMEM_Params);
-    FPSSx80BankParams[aVoiceNr].FPSSx80_VCED_Params.BANK:=aVoiceNr;
+    FPSSx80BankParams[aVoiceNr].FPSSx80_VCED_Params.BANK := aVoiceNr - 1;
     Result := True;
   end
   else
@@ -115,7 +115,7 @@ begin
       if assigned(FPSSx80BankParams[i]) then
       begin
         FPSSx80BankParams[i].Load_VMEM_FromStream(aStream, aStream.Position);
-        FPSSx80BankParams[i].FPSSx80_VCED_Params.BANK := i;
+        FPSSx80BankParams[i].FPSSx80_VCED_Params.BANK := i - 1;
       end;
     end;
   except
@@ -155,7 +155,7 @@ begin
       tmpStream.WriteByte($43);
       tmpStream.WriteByte($76);
       tmpStream.WriteByte($00);
-      if FPSSx80BankParams[i].Save_VMEM_ToStream(i, tmpStream) = False then
+      if FPSSx80BankParams[i].Save_VMEM_ToStream(i - 1, tmpStream) = False then
         Result := False;
       tmpStream.WriteByte(FPSSx80BankParams[i].GetChecksum);
       tmpStream.WriteByte($F7);
@@ -206,7 +206,7 @@ var
   i: integer;
 begin
   for i := 1 to 5 do
-  FPSSx80BankParams[i].InitVoice;
+    FPSSx80BankParams[i].InitVoice;
 end;
 
 end.

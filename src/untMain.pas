@@ -24,7 +24,7 @@ uses
   {$ENDIF}
   SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
   Grids, Spin, atshapeline, ECEditBtns, ECLink, ECSlider, ECSpinCtrls, Types,
-  LCLIntf, LazFileUtils, LCLType, MaskEdit, LazUTF8, TAGraph, TASeries,
+  LCLIntf, LazFileUtils, LCLType, MaskEdit, AdvLed, LazUTF8, TAGraph, TASeries,
   TAGUIConnectorBGRA, Math
   {$IFDEF WINDOWS}
   ,MIDI, untUnPortMIDI
@@ -40,9 +40,13 @@ type
   { TfrmMain }
 
   TfrmMain = class(TForm)
+    alBank1: TAdvLed;
+    alBank2: TAdvLed;
+    alBank3: TAdvLed;
+    alBank4: TAdvLed;
+    alBank5: TAdvLed;
     btDeleteVoiceDB: TButton;
-    btSelectDir: TECSpeedBtnPlus;
-    btSelSDCard: TECSpeedBtnPlus;
+    btStore: TButton;
     CarrierRR: TLineSeries;
     CarrierSRR: TLineSeries;
     cbAutoPreview: TCheckBox;
@@ -68,7 +72,6 @@ type
     lbMidiOut: TLabel;
     lbCar: TLabel;
     lbPopUpDur: TLabel;
-    lnkCredits1: TECLink;
     lnkCredits2: TECLink;
     lnkCredits3: TECLink;
     MaskEdit1: TMaskEdit;
@@ -170,7 +173,6 @@ type
     lbVoices: TListBox;
     tbpnSearch: TPanel;
     pcFilesDatabase: TPageControl;
-    pcMain: TPageControl;
     pnBankSlots: TPanel;
     pnFileManager: TPanel;
     pnVoiceManager: TPanel;
@@ -180,7 +182,6 @@ type
     sl3: TShapeLine;
     sl4: TShapeLine;
     Splitter1: TSplitter;
-    Splitter2: TSplitter;
     sgDB: TStringGrid;
     tbDatabase: TToolBar;
     tbbtRefresh: TToolButton;
@@ -194,9 +195,9 @@ type
     tbStoreToDB: TToolButton;
     tsFiles: TTabSheet;
     tsDatabase: TTabSheet;
-    tsLibrarian: TTabSheet;
     procedure btDeleteVoiceDBClick(Sender: TObject);
     procedure btSelectDirClick(Sender: TObject);
+    procedure btStoreClick(Sender: TObject);
     procedure cbMidiInChange(Sender: TObject);
     procedure cbMidiOutChange(Sender: TObject);
     procedure C_LKSChange(Sender: TObject);
@@ -244,6 +245,9 @@ type
     function LoadVoiceNames(aSysExName: string): boolean;
     function SaveVoiceNames(aSysExName: string): boolean;
     procedure RefreshGui;
+    procedure LEDs(aVoiceNr: integer);
+    procedure LEDGreen(aVoiceNr: integer);
+    procedure LEDYellow(aVoiceNr: integer);
 
   private
     {$IFDEF WINDOWS}
@@ -280,6 +284,8 @@ var
   FTmpVoice: TPSSx80VoiceContainer;
   FTmpBank: TPSSx80BankContainer;
   FBank: TPSSx80BankContainer;
+  CurrentBank: integer;
+  LoadingBank: boolean;
 
 implementation
 
@@ -362,19 +368,29 @@ end;
 
 procedure TfrmMain.OnSysExData(const aDeviceIndex: integer;
   const aStream: TMemoryStream);
+var
+  start: integer;
+  isBank: boolean;
+  i: integer;
+  FStream: TMemoryStream;
 begin
-  //do something with data
-  Unused(aDeviceIndex, aStream);
-  //memLog.Lines.BeginUpdate;
+  Unused(aDeviceIndex);
   try
-    // print the message log
-    {memLog.Lines.Insert( 0, Format( '[%s] %s: <Bytes> %d <SysEx> %s',
-      [ FormatDateTime( 'HH:NN:SS.ZZZ', now ),
-        MidiInput.Devices[aDeviceIndex],
-        aStream.Size,
-        SysExStreamToStr( aStream ) ] )); }
+    FStream := TMemoryStream.Create;
+    FStream.LoadFromStream(aStream);
+    start := 0;
+    isBank := False;
+    if ContainsPSSx80Data(FStream, start, isBank) then
+      if isBank then
+      begin
+        FBank.LoadBankFromStream(FStream, start);
+        for i := 1 to 5 do
+          FBank.SetVoiceName(i, 'Received ' + IntToStr(i));
+        VoiceToGUI(1);
+        PopUp('Bank dump' + #13#10 + 'received', PopUpDuration);
+      end;
   finally
-    //memLog.Lines.EndUpdate;
+    FStream.Free;
   end;
 end;
 
@@ -383,11 +399,17 @@ begin
   if SelectSysExDirectoryDialog1.Execute then
   begin
     lbVoices.Clear;
-    edbtSelSysExDir.Text := SelectSysExDirectoryDialog1.FileName;
     LastSysExOpenDir := IncludeTrailingPathDelimiter(
       SelectSysExDirectoryDialog1.FileName);
+    edbtSelSysExDir.Text := ShortenFileName(LastSysExOpenDir);
     FillFilesList(SelectSysExDirectoryDialog1.FileName);
   end;
+end;
+
+procedure TfrmMain.btStoreClick(Sender: TObject);
+begin
+  GUIToVoice(CurrentBank);
+  LEDGreen(CurrentBank);
 end;
 
 procedure TfrmMain.RefreshGraph;
@@ -398,8 +420,8 @@ var
 begin
   d1 := 15;
   d2 := 12;
-  M_off := 0;
-  C_off := 20;
+  M_off := 20;
+  C_off := 0;
   with Graph do
   begin
     ModulatorRR.Clear;
@@ -407,8 +429,8 @@ begin
     CarrierRR.Clear;
     CarrierSRR.Clear;
     Divider.Clear;
-    Divider.AddXY(0, C_off - 2);
-    Divider.AddXY(320, C_off - 2);
+    Divider.AddXY(0, M_off - 2);
+    Divider.AddXY(320, M_off - 2);
 
     ModulatorRR.AddXY(0, M_off);
     newX := 64 - M_AR.Position;
@@ -556,7 +578,6 @@ begin
     if (lbVoices.ItemIndex = -1) or (lbFiles.ItemIndex = -1) then Exit;
     FTmpVoice.InitVoice;
     FTmpBank.GetVoice(lbVoices.ItemIndex + 1, FTmpVoice);
-    //FTmpVoice.FPSSx80_VCED_Params.BANK := (Sender as TLabeledEdit).Tag;
     FBank.SetVoice((Sender as TLabeledEdit).Tag, FTmpVoice);
     FBank.SetVoiceName((Sender as TLabeledEdit).Tag,
       FTmpBank.GetVoiceName(lbVoices.ItemIndex + 1));
@@ -627,6 +648,9 @@ begin
     ini.WriteString('LastSysEx', LastSysEx);
     ini.WriteInteger('FontSize', frmMain.Font.Height);
     ini.WriteInteger('PopUpDuration', PopUpDuration);
+    ini.WriteInteger('PanelPosition1', pcFilesDatabase.Width);
+    ini.WriteInteger('PanelPosition2', pnFileManager.Width);
+    ini.WriteInteger('PanelPosition3', frmMain.Width);
     ini.SaveToFile(HomeDir + 'settings.ini');
     FBank.SaveBankToSysExFile(HomeDir + 'lastState.syx');
     SaveVoiceNames(HomeDir + 'lastState.syx');
@@ -650,6 +674,8 @@ var
   i: integer;
   ini: TMiniINIFile;
 begin
+  CurrentBank := 1;
+  LoadingBank := False;
   frmMain.FormStyle := fsNormal;
   //something in Lazarus changes the lfm file and puts fsStayOnTop
   HomeDir := IncludeTrailingPathDelimiter(IncludeTrailingPathDelimiter(GetUserDir) +
@@ -666,6 +692,7 @@ begin
   begin
     TLabeledEdit(FindComponent(Format('edSlot%.2d', [i]))).Text :=
       FBank.GetVoiceName(i);
+    LEDGreen(i);
   end;
 
   for i := 1 to 36 do
@@ -755,10 +782,13 @@ begin
     PopUpDuration := ini.ReadInteger('PopUpDuration', 2);
     sePopUpDur.Value := PopUpDuration;
     seFontSize.Value := frmMain.Font.Height;
+    pcFilesDatabase.Width := ini.ReadInteger('PanelPosition1', 680);
+    pnFileManager.Width := ini.ReadInteger('PanelPosition2', 360);
+    frmMain.Width := ini.ReadInteger('PanelPosition3', 1490);
     if DirectoryExists(LastSysExOpenDir) then
     begin
       SelectSysExDirectoryDialog1.InitialDir := LastSysExOpenDir;
-      edbtSelSysExDir.Text := LastSysExOpenDir;
+      edbtSelSysExDir.Text := ShortenFileName(LastSysExOpenDir);
       FillFilesList(LastSysExOpenDir);
     end;
     if DirectoryExists(LastSysExSaveDir) then
@@ -769,8 +799,11 @@ begin
       if FileExists(LastSysExOpenDir + LastSysEx) then
         OpenSysEx(LastSysExOpenDir + LastSysEx);
     end;
-    VoiceToGUI(1);
+
     LoadLastStateBank;
+    LoadingBank := True;
+    VoiceToGUI(CurrentBank);
+    LoadingBank := False;
   finally
     ini.Free;
   end;
@@ -822,7 +855,6 @@ begin
       end;
     end;
     dmp.Free;
-    VoiceToGUI(1);
   end;
 end;
 
@@ -836,7 +868,7 @@ begin
     lastClickedFile := lbFiles.ItemIndex;
     Itm := lbFiles.Items[lbFiles.ItemIndex];
     LastSysEx := itm;
-    dbg := IncludeTrailingPathDelimiter(edbtSelSysExDir.Text) + Itm;
+    dbg := IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm;
     lbVoices.Clear;
     OpenSysEx(dbg);
     if (lastClickedFile <> -1) and ((lastClickedFile) < lbFiles.Items.Count) then
@@ -856,7 +888,7 @@ begin
     lastClickedFile := lbFiles.ItemIndex;
     Itm := lbFiles.Items[lbFiles.ItemIndex];
     LastSysEx := itm;
-    dbg := IncludeTrailingPathDelimiter(edbtSelSysExDir.Text) + Itm;
+    dbg := IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm;
     lbVoices.Clear;
     OpenSysEx(dbg);
     if (lastClickedFile <> -1) and ((lastClickedFile) < lbFiles.Items.Count) then
@@ -927,6 +959,7 @@ procedure TfrmMain.SliderLinkedEdit(Sender: TObject);
 var
   i: integer;
 begin
+  if not LoadingBank then LEDYellow(CurrentBank);
   for i := 0 to pnBankSlots.ControlCount - 1 do
     if (pnBankSlots.Controls[i].Tag = (Sender as TECSlider).Tag) and
       (pnBankSlots.Controls[i] is TMaskEdit) then
@@ -946,7 +979,9 @@ end;
 
 procedure TfrmMain.pnSlotClick(Sender: TObject);
 begin
+  LoadingBank := True;
   VoiceToGUI((Sender as TPanel).Tag);
+  LoadingBank := False;
 end;
 
 procedure TfrmMain.OpenSysEx(aName: string);
@@ -1021,7 +1056,7 @@ begin
   else
   begin
     ShowMessage('Please set-up the MIDI Output first');
-    pcMain.ActivePage := tsSettings;
+    pcFilesDatabase.ActivePage := tsSettings;
   end;
 end;
 
@@ -1047,7 +1082,7 @@ begin
   else
   begin
     ShowMessage('Please set-up the MIDI Output first');
-    pcMain.ActivePage := tsSettings;
+    pcFilesDatabase.ActivePage := tsSettings;
   end;
 end;
 
@@ -1211,6 +1246,8 @@ var
   i: integer;
 begin
   FTmpVoice.Set_VCED_Params(FBank.GetVCED(aVoiceNr));
+  LEDs(aVoiceNr);
+  CurrentBank := aVoiceNr;
 
   M_MUL.Position := FTmpVoice.Get_VCED_Params.M_MUL;
   //ToDo check if DT1 is OK
@@ -1273,47 +1310,53 @@ var
   dtVal: integer;
 begin
   FTmpVoice.FPSSx80_VCED_Params.M_MUL := trunc(M_MUL.Position);
-  if M_DT1.Position < 0 then dtSgn:= 8 else dtSgn := 0;
+  if M_DT1.Position < 0 then dtSgn := 8
+  else
+    dtSgn := 0;
   dtVal := trunc(M_DT1.Position) + dtSgn;
   FTmpVoice.FPSSx80_VCED_Params.M_DT1 := dtVal;
-  FTmpVoice.FPSSx80_VCED_Params.M_DT2:= trunc(M_DT2.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_DT2 := trunc(M_DT2.Position);
   FTmpVoice.FPSSx80_VCED_Params.M_SIN_TBL := trunc(M_SIN_TBL.Position);
   FTmpVoice.FPSSx80_VCED_Params.M_AM_EN := trunc(M_AM_EN.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_AR  := trunc(M_AR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D1R  := trunc(M_D1R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D1L  := trunc(M_D1L.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D2R  := trunc(M_D2R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_RR  := trunc(M_RR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_SRR  := trunc(M_SRR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_RKS  := trunc(M_RKS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_LKS_LO  := trunc(M_LKS_LO.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_LKS_HI  := trunc(M_LKS_HI.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_FB  := trunc(M_FB.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_TL  := 99 - trunc(M_TL.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_AR := trunc(M_AR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D1R := trunc(M_D1R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D1L := trunc(M_D1L.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_D2R := trunc(M_D2R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_RR := trunc(M_RR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_SRR := trunc(M_SRR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_RKS := trunc(M_RKS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_LKS_LO := trunc(M_LKS_LO.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_LKS_HI := trunc(M_LKS_HI.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_FB := trunc(M_FB.Position);
+  FTmpVoice.FPSSx80_VCED_Params.M_TL := 99 - trunc(M_TL.Position);
 
   FTmpVoice.FPSSx80_VCED_Params.C_MUL := trunc(C_MUL.Position);
-  if C_DT1.Position < 0 then dtSgn:= 8 else dtSgn := 0;
+  if C_DT1.Position < 0 then dtSgn := 8
+  else
+    dtSgn := 0;
   dtVal := trunc(C_DT1.Position) + dtSgn;
   FTmpVoice.FPSSx80_VCED_Params.C_DT1 := dtVal;
-  FTmpVoice.FPSSx80_VCED_Params.C_DT2:= trunc(C_DT2.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_DT2 := trunc(C_DT2.Position);
   FTmpVoice.FPSSx80_VCED_Params.C_SIN_TBL := trunc(C_SIN_TBL.Position);
   FTmpVoice.FPSSx80_VCED_Params.C_AM_EN := trunc(C_AM_EN.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_AR  := trunc(C_AR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D1R  := trunc(C_D1R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D1L  := trunc(C_D1L.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D2R  := trunc(C_D2R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_RR  := trunc(C_RR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_SRR  := trunc(C_SRR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_RKS  := trunc(C_RKS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_LKS_LO  := trunc(C_LKS_LO.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_LKS_HI  := trunc(C_LKS_HI.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_TL  := 99 - trunc(C_TL.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_AR := trunc(C_AR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D1R := trunc(C_D1R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D1L := trunc(C_D1L.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_D2R := trunc(C_D2R.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_RR := trunc(C_RR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_SRR := trunc(C_SRR.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_RKS := trunc(C_RKS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_LKS_LO := trunc(C_LKS_LO.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_LKS_HI := trunc(C_LKS_HI.Position);
+  FTmpVoice.FPSSx80_VCED_Params.C_TL := 99 - trunc(C_TL.Position);
 
-  FTmpVoice.FPSSx80_VCED_Params.PMS  := trunc(PMS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.AMS  := trunc(AMS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.VDT  := trunc(VDT.Position);
-  FTmpVoice.FPSSx80_VCED_Params.V  := trunc(V.Position);
-  FTmpVoice.FPSSx80_VCED_Params.S  := trunc(S.Position);
+  FTmpVoice.FPSSx80_VCED_Params.PMS := trunc(PMS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.AMS := trunc(AMS.Position);
+  FTmpVoice.FPSSx80_VCED_Params.VDT := trunc(VDT.Position);
+  FTmpVoice.FPSSx80_VCED_Params.V := trunc(V.Position);
+  FTmpVoice.FPSSx80_VCED_Params.S := trunc(S.Position);
+
+  FTmpVoice.Set_VMEM_Params(VCEDtoVMEM(FTmpVoice.Get_VCED_Params));
 
   FBank.SetVoice(aVoiceNr, FTmpVoice);
 end;
@@ -1370,6 +1413,107 @@ begin
   SliderChange(M_AR);
   M_LKSChange(M_LKS_HI);
   C_LKSChange(C_LKS_HI);
+end;
+
+procedure TfrmMain.LEDs(aVoiceNr: integer);
+begin
+  case aVoiceNr of
+    1: begin
+      alBank1.Enabled := True;
+      alBank1.State := lsOn;
+      alBank2.Enabled := False;
+      alBank2.State := lsOff;
+      alBank3.Enabled := False;
+      alBank3.State := lsOff;
+      alBank4.Enabled := False;
+      alBank4.State := lsOff;
+      alBank5.Enabled := False;
+      alBank5.State := lsOff;
+    end;
+    2: begin
+      alBank1.Enabled := False;
+      alBank1.State := lsOff;
+      alBank2.Enabled := True;
+      alBank2.State := lsOn;
+      alBank3.Enabled := False;
+      alBank3.State := lsOff;
+      alBank4.Enabled := False;
+      alBank4.State := lsOff;
+      alBank5.Enabled := False;
+      alBank5.State := lsOff;
+    end;
+    3: begin
+      alBank1.Enabled := False;
+      alBank1.State := lsOff;
+      alBank2.Enabled := False;
+      alBank2.State := lsOff;
+      alBank3.Enabled := True;
+      alBank3.State := lsOn;
+      alBank4.Enabled := False;
+      alBank4.State := lsOff;
+      alBank5.Enabled := False;
+      alBank5.State := lsOff;
+    end;
+    4: begin
+      alBank1.Enabled := False;
+      alBank1.State := lsOff;
+      alBank2.Enabled := False;
+      alBank2.State := lsOff;
+      alBank3.Enabled := False;
+      alBank3.State := lsOff;
+      alBank4.Enabled := True;
+      alBank4.State := lsOn;
+      alBank5.Enabled := False;
+      alBank5.State := lsOff;
+    end;
+    5: begin
+      alBank1.Enabled := False;
+      alBank1.State := lsOff;
+      alBank2.Enabled := False;
+      alBank2.State := lsOff;
+      alBank3.Enabled := False;
+      alBank3.State := lsOff;
+      alBank4.Enabled := False;
+      alBank4.State := lsOff;
+      alBank5.Enabled := True;
+      alBank5.State := lsOn;
+    end;
+    else
+    begin
+      alBank1.Enabled := False;
+      alBank1.State := lsOff;
+      alBank2.Enabled := False;
+      alBank2.State := lsOff;
+      alBank3.Enabled := False;
+      alBank3.State := lsOff;
+      alBank4.Enabled := False;
+      alBank4.State := lsOff;
+      alBank5.Enabled := False;
+      alBank5.State := lsOff;
+    end;
+  end;
+end;
+
+procedure TfrmMain.LEDGreen(aVoiceNr: integer);
+begin
+  case aVoiceNr of
+    1: alBank1.Kind := lkGreenLight;
+    2: alBank2.Kind := lkGreenLight;
+    3: alBank3.Kind := lkGreenLight;
+    4: alBank4.Kind := lkGreenLight;
+    5: alBank5.Kind := lkGreenLight;
+  end;
+end;
+
+procedure TfrmMain.LEDYellow(aVoiceNr: integer);
+begin
+  case aVoiceNr of
+    1: alBank1.Kind := lkYellowLight;
+    2: alBank2.Kind := lkYellowLight;
+    3: alBank3.Kind := lkYellowLight;
+    4: alBank4.Kind := lkYellowLight;
+    5: alBank5.Kind := lkYellowLight;
+  end;
 end;
 
 end.
