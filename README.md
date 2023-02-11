@@ -24,6 +24,7 @@ External components needed to build the PSS Revive are available through Lazarus
 - HashLib4Pascal
 - TAChart
 - BGRA Controls
+- IndustrialStuff
 
 ## Linux notes
 libQt5pas distributed with Ubuntu and derivates is know to cause problems. 
