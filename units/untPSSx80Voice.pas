@@ -138,6 +138,7 @@ type
     procedure SetVoiceName(aVoiceName: string);
     procedure SysExVoiceToStream(var aStream: TMemoryStream);
     function CalculateHash: string;
+    function Unk_Param: Boolean;
   end;
 
 function VCEDtoVMEM(aPar: TPSSx80_VCED_Params): TPSSx80_VMEM_Params;
@@ -393,6 +394,33 @@ begin
   Save_VMEM_ToStream(FPSSx80_VMEM_Params.BANK, aStream);
   aStream.WriteByte(GetChecksum);
   aStream.WriteByte($F7);
+end;
+
+function TPSSx80VoiceContainer.Unk_Param: Boolean;
+const
+  unk: array[0..32] of integer = (0,0,0,128,128,0,0,0,0,0,0,0,0,0,0, 199, 140, 255, 255, 255, 240, 240, 128,255,63,255,255,255,255,255,255,255,255);
+begin
+  Result := False;
+  if (FPSSx80_VMEM_Params.params[3] and 128) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[4] and 128) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[15] and 199) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[16] and 140) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[17] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[18] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[19] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[20] and 240) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[21] and 240) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[22] and 128) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[23] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[24] and 63) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[25] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[26] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[27] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[28] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[29] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[30] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[31] and 255) <> 0 then Result := True;
+  if (FPSSx80_VMEM_Params.params[32] and 255) <> 0 then Result := True;
 end;
 
 end.

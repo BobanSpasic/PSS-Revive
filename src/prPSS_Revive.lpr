@@ -22,7 +22,8 @@ uses
   untSQLProxy,
   untParConst,
   untPSSx80Voice,
-  untPSSx80Bank;
+  untPSSx80Bank, 
+  untVMEM_View;
 
 {$R *.res}
 
@@ -32,5 +33,6 @@ begin
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmVMEM_View, frmVMEM_View);
   Application.Run;
 end.

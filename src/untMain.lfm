@@ -126,6 +126,7 @@ object frmMain: TfrmMain
           DragMode = dmAutomatic
           ExtendedSelect = False
           ItemHeight = 0
+          OnClick = lbVoicesClick
           OnStartDrag = lbVoicesStartDrag
           Options = []
           TabOrder = 0
@@ -148,7 +149,7 @@ object frmMain: TfrmMain
         Columns = <        
           item
             Title.Caption = 'Voice'
-            Width = 659
+            Width = 676
           end        
           item
             ReadOnly = True
@@ -167,7 +168,7 @@ object frmMain: TfrmMain
         OnEditingDone = sgDBEditingDone
         OnStartDrag = sgDBStartDrag
         ColWidths = (
-          659
+          676
           0
         )
       end
@@ -493,6 +494,7 @@ object frmMain: TfrmMain
         OnEditingDone = edSlotEditingDone
       end
       object alBank1: TAdvLed
+        Tag = 1
         AnchorSideLeft.Control = edSlot01
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot01
@@ -503,6 +505,7 @@ object frmMain: TfrmMain
         Width = 24
         Kind = lkGreenLight
         BorderSpacing.Left = 20
+        OnClick = alBankClick
       end
     end
     object pnSlot02: TPanel
@@ -538,6 +541,7 @@ object frmMain: TfrmMain
         OnEditingDone = edSlotEditingDone
       end
       object alBank2: TAdvLed
+        Tag = 2
         AnchorSideLeft.Control = edSlot02
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot02
@@ -548,6 +552,7 @@ object frmMain: TfrmMain
         Width = 24
         Kind = lkGreenLight
         BorderSpacing.Left = 20
+        OnClick = alBankClick
       end
     end
     object pnSlot03: TPanel
@@ -584,6 +589,7 @@ object frmMain: TfrmMain
         OnEditingDone = edSlotEditingDone
       end
       object alBank3: TAdvLed
+        Tag = 3
         AnchorSideLeft.Control = edSlot03
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot03
@@ -594,6 +600,7 @@ object frmMain: TfrmMain
         Width = 24
         Kind = lkGreenLight
         BorderSpacing.Left = 20
+        OnClick = alBankClick
       end
     end
     object pnSlot04: TPanel
@@ -630,6 +637,7 @@ object frmMain: TfrmMain
         OnEditingDone = edSlotEditingDone
       end
       object alBank4: TAdvLed
+        Tag = 4
         AnchorSideLeft.Control = edSlot04
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot04
@@ -640,6 +648,7 @@ object frmMain: TfrmMain
         Width = 24
         Kind = lkGreenLight
         BorderSpacing.Left = 20
+        OnClick = alBankClick
       end
     end
     object pnSlot05: TPanel
@@ -676,6 +685,7 @@ object frmMain: TfrmMain
         OnEditingDone = edSlotEditingDone
       end
       object alBank5: TAdvLed
+        Tag = 5
         AnchorSideLeft.Control = edSlot05
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot05
@@ -686,6 +696,7 @@ object frmMain: TfrmMain
         Width = 24
         Kind = lkGreenLight
         BorderSpacing.Left = 20
+        OnClick = alBankClick
       end
     end
     object tbBank: TToolBar
@@ -2189,6 +2200,7 @@ object frmMain: TfrmMain
       Top = 553
       Width = 399
       Anchors = [akRight, akBottom]
+      OnClick = imLogoClick
       Picture.Data = {
         1754506F727461626C654E6574776F726B47726170686963FB9B000089504E47
         0D0A1A0A0000000D494844520000018F0000007B08060000008CEE0C5C000000

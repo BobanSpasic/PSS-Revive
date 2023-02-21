@@ -181,9 +181,8 @@
         <ComponentName Value="frmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="339"/>
-        <CursorPos X="22" Y="377"/>
+        <TopLine Value="935"/>
+        <CursorPos X="51" Y="944"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -241,19 +240,33 @@
         <Filename Value="../units/untPSSx80Voice.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="117"/>
-        <CursorPos X="3" Y="325"/>
-        <UsageCount Value="62"/>
+        <CursorPos Y="300"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../units/untPSSx80Bank.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="76"/>
-        <CursorPos X="41" Y="95"/>
-        <UsageCount Value="62"/>
+        <TopLine Value="68"/>
+        <CursorPos Y="81"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untvmem_view.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmVMEM_View"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="untVMEM_View"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="204"/>
+        <CursorPos X="55" Y="228"/>
+        <UsageCount Value="30"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../units/untDX7Voice.pas"/>
@@ -403,11 +416,10 @@
       <Unit>
         <Filename Value="../ext_units/midi.pas"/>
         <UnitName Value="MIDI"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="359"/>
         <CursorPos X="75" Y="87"/>
-        <UsageCount Value="70"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="74"/>
       </Unit>
       <Unit>
         <Filename Value="../ext_units/MIDI_Core.pas"/>
@@ -547,127 +559,135 @@
         <CursorPos X="3" Y="261"/>
         <UsageCount Value="11"/>
       </Unit>
+      <Unit>
+        <Filename Value="../../../../../../lazarus/lcl/grids.pas"/>
+        <UnitName Value="Grids"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4422"/>
+        <CursorPos Y="4440"/>
+        <UsageCount Value="13"/>
+      </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="785" Column="22" TopLine="759"/>
+        <Filename Value="untvmem_view.pas"/>
+        <Caret Line="149" Column="43" TopLine="147"/>
+      </Position>
+      <Position>
+        <Filename Value="untvmem_view.pas"/>
+        <Caret Line="154" Column="16" TopLine="147"/>
+      </Position>
+      <Position>
+        <Filename Value="untvmem_view.pas"/>
+        <Caret Line="144" Column="15" TopLine="137"/>
+      </Position>
+      <Position>
+        <Filename Value="untvmem_view.pas"/>
+        <Caret Line="153" Column="22" TopLine="128"/>
+      </Position>
+      <Position>
+        <Filename Value="untvmem_view.pas"/>
+        <Caret Line="24" Column="21" TopLine="7"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="865" Column="57" TopLine="838"/>
+        <Caret Line="497" Column="8" TopLine="481"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="885" Column="57" TopLine="858"/>
+        <Caret Line="491" TopLine="481"/>
+      </Position>
+      <Position>
+        <Filename Value="../units/untPSSx80Bank.pas"/>
+        <Caret Line="75" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="../units/untPSSx80Bank.pas"/>
+        <Caret Line="76" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="../units/untPSSx80Bank.pas"/>
+        <Caret Line="78" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="../units/untPSSx80Bank.pas"/>
+        <Caret Line="80" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="../units/untPSSx80Bank.pas"/>
+        <Caret Line="81" TopLine="68"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="128" Column="20" TopLine="113"/>
+        <Caret Line="491" TopLine="481"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="128" Column="20" TopLine="113"/>
+        <Caret Line="593" Column="7" TopLine="567"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="28" Column="37"/>
+        <Caret Line="495" Column="27" TopLine="490"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="128" Column="20" TopLine="102"/>
+        <Caret Line="849" Column="3" TopLine="847"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="396" Column="72" TopLine="370"/>
+        <Caret Line="198" Column="15" TopLine="183"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="398" Column="61" TopLine="370"/>
-      </Position>
-      <Position>
-        <Filename Value="../units/untUtils.pas"/>
-        <Caret Line="89" Column="36" TopLine="41"/>
-      </Position>
-      <Position>
-        <Filename Value="../units/untUtils.pas"/>
-        <Caret Line="93" Column="102" TopLine="61"/>
+        <Caret Line="492" Column="3" TopLine="473"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="385" Column="60" TopLine="370"/>
+        <Caret Line="850" Column="20" TopLine="847"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="128" Column="20" TopLine="113"/>
+        <Caret Line="898" Column="11" TopLine="886"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="398" Column="20" TopLine="371"/>
+        <Caret Line="1035" Column="9" TopLine="1014"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="1091" Column="40" TopLine="1068"/>
+        <Caret Line="951" Column="3" TopLine="943"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="263" Column="15" TopLine="248"/>
+        <Caret Line="950" Column="14" TopLine="943"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="386" Column="61" TopLine="372"/>
+        <Caret Line="598" Column="5" TopLine="584"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="388" Column="57" TopLine="367"/>
+        <Caret Line="949" Column="50" TopLine="943"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="383" Column="35" TopLine="370"/>
+        <Caret Line="1045" Column="56" TopLine="1024"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="246" Column="15" TopLine="231"/>
+        <Caret Line="948" Column="29" TopLine="932"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="1258" Column="87" TopLine="1244"/>
+        <Caret Line="1035" Column="5" TopLine="1005"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="408" Column="26" TopLine="392"/>
+        <Caret Line="946" Column="17" TopLine="932"/>
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="455" Column="22" TopLine="442"/>
-      </Position>
-      <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="1046" Column="73" TopLine="1032"/>
-      </Position>
-      <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="177" Column="35" TopLine="163"/>
-      </Position>
-      <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="197" Column="27" TopLine="13"/>
-      </Position>
-      <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="259" Column="33" TopLine="243"/>
-      </Position>
-      <Position>
-        <Filename Value="untMain.pas"/>
-        <Caret Line="377" Column="22" TopLine="339"/>
-      </Position>
-      <Position>
-        <Filename Value="../ext_units/midi.pas"/>
-        <Caret Line="262" Column="26" TopLine="246"/>
-      </Position>
-      <Position>
-        <Filename Value="../ext_units/midi.pas"/>
-        <Caret Line="123" Column="27" TopLine="117"/>
+        <Caret Line="895" Column="5" TopLine="887"/>
       </Position>
     </JumpHistory>
     <RunParams>

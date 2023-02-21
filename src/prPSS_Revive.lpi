@@ -72,6 +72,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="KControlsLaz"/>
+      </Item>
+      <Item>
         <PackageName Value="industrial"/>
       </Item>
       <Item>
@@ -155,6 +158,14 @@
       <Unit>
         <Filename Value="..\units\untPSSx80Bank.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untVMEM_View.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmVMEM_View"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="untVMEM_View"/>
       </Unit>
     </Units>
   </ProjectOptions>

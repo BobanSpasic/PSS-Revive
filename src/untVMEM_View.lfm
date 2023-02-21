@@ -1,0 +1,178 @@
+object frmVMEM_View: TfrmVMEM_View
+  Left = 545
+  Height = 805
+  Top = 146
+  Width = 1165
+  AutoSize = True
+  Caption = 'VMEM View'
+  ClientHeight = 805
+  ClientWidth = 1165
+  FormStyle = fsStayOnTop
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poMainFormCenter
+  LCLVersion = '2.2.4.0'
+  object sgParams: TKGrid
+    AnchorSideLeft.Control = sgVMEM
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = sgVMEM
+    Left = 548
+    Height = 752
+    Top = 0
+    Width = 544
+    ColCount = 9
+    Color = clDefault
+    Colors.CellLines = clBlack
+    DefaultColWidth = 60
+    DefaultRowHeight = 21
+    DisabledDrawStyle = ddNormal
+    Options = [goDrawFocusSelected, goEnterMoves, goFixedHorzLine, goFixedVertLine, goHeader, goHeaderAlignment, goHorzLine, goIndicateHiddenCells, goMouseCanHideCells, goMouseOverCells, goRangeSelect, goThemes, goThemedCells, goVertLine]
+    RowCount = 34
+    ScrollBars = ssNone
+    TabOrder = 0
+    ColWidths = (
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+    )
+    RowHeights = (
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+    )
+  end
+  object sgVMEM: TStringGrid
+    Left = 0
+    Height = 752
+    Top = 0
+    Width = 544
+    ColCount = 9
+    Columns = <    
+      item
+        Title.Caption = '7'
+      end    
+      item
+        Title.Caption = '6'
+      end    
+      item
+        Title.Caption = '5'
+      end    
+      item
+        Title.Caption = '4'
+      end    
+      item
+        Title.Caption = '3'
+      end    
+      item
+        Title.Caption = '2'
+      end    
+      item
+        Title.Caption = '1'
+      end    
+      item
+        Title.Caption = '0'
+      end>
+    DefaultColWidth = 60
+    RowCount = 34
+    ScrollBars = ssNone
+    TabOrder = 1
+    OnPrepareCanvas = sgVMEMPrepareCanvas
+    OnSelection = sgVMEMSelection
+  end
+  object btBank1: TButton
+    Tag = 1
+    Left = 80
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Bank 1'
+    OnClick = btBankClick
+    TabOrder = 2
+  end
+  object btBank2: TButton
+    Tag = 2
+    Left = 160
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Bank 2'
+    OnClick = btBankClick
+    TabOrder = 3
+  end
+  object btBank3: TButton
+    Tag = 3
+    Left = 240
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Bank 3'
+    OnClick = btBankClick
+    TabOrder = 4
+  end
+  object btBank4: TButton
+    Tag = 4
+    Left = 320
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Bank 4'
+    OnClick = btBankClick
+    TabOrder = 5
+  end
+  object btBank5: TButton
+    Tag = 5
+    Left = 400
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Bank 5'
+    OnClick = btBankClick
+    TabOrder = 6
+  end
+  object btLabel: TButton
+    Left = 0
+    Height = 25
+    Top = 752
+    Width = 75
+    Caption = 'Save to'
+    TabOrder = 7
+  end
+end

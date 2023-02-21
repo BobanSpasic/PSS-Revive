@@ -24,8 +24,8 @@ uses
   {$ENDIF}
   SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
   Grids, Spin, atshapeline, ECEditBtns, ECLink, ECSlider, ECSpinCtrls, Types,
-  LCLIntf, LazFileUtils, LCLType, MaskEdit, AdvLed, LazUTF8, TAGraph, TASeries,
-  TAGUIConnectorBGRA, Math
+  LCLIntf, LazFileUtils, LCLType, MaskEdit, AdvLed, LazUTF8,
+  TAGraph, TASeries, TAGUIConnectorBGRA, Math
   {$IFDEF WINDOWS}
   ,MIDI, untUnPortMIDI
   {$ENDIF}
@@ -33,7 +33,7 @@ uses
   ,untLinuxMIDI, PortMidi
   {$ENDIF}
   , untPSSx80Voice, untPSSx80Bank, untSQLProxy, untUtils, untPSSx80Utils,
-  untMiniINI, untPopUp;
+  untMiniINI, untPopUp, untVMEM_View;
 
 type
 
@@ -195,6 +195,7 @@ type
     tbStoreToDB: TToolButton;
     tsFiles: TTabSheet;
     tsDatabase: TTabSheet;
+    procedure alBankClick(Sender: TObject);
     procedure btDeleteVoiceDBClick(Sender: TObject);
     procedure btSelectDirClick(Sender: TObject);
     procedure btStoreClick(Sender: TObject);
@@ -209,9 +210,11 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure imLKS_LOClick(Sender: TObject);
+    procedure imLogoClick(Sender: TObject);
     procedure lbFilesClick(Sender: TObject);
     procedure lbFilesDblClick(Sender: TObject);
     procedure lbFilesStartDrag(Sender: TObject; var DragObject: TDragObject);
+    procedure lbVoicesClick(Sender: TObject);
     procedure lbVoicesStartDrag(Sender: TObject; var DragObject: TDragObject);
     procedure lnkCreditsClick(Sender: TObject);
     procedure MaskEditLinkedEdit(Sender: TObject);
@@ -485,6 +488,23 @@ begin
   end;
 end;
 
+procedure TfrmMain.alBankClick(Sender: TObject);
+begin
+  FBank.GetVoice((Sender as TAdvLed).Tag, FTmpVoice);
+  frmVMEM_View.FillSG(FTmpVoice.Get_VMEM_Params);
+  untVMEM_View.VoiceName := FBank.GetVoiceName((Sender as TAdvLed).Tag);
+  untVMEM_View.Editing := True;
+  frmVMEM_View.ShowModal;
+  //after close
+  if untVMEM_View.SaveToBank <> 0 then
+    //zero means the form is closed without click on Save to Bank X
+  begin
+    if Assigned(untVMEM_View.TmpVoice) then
+      FBank.SetVoice(untVMEM_View.SaveToBank, untVMEM_View.TmpVoice);
+    FBank.SetVoiceName(untVMEM_View.SaveToBank, untVMEM_View.VoiceName);
+  end;
+end;
+
 procedure TfrmMain.cbMidiInChange(Sender: TObject);
 var
   i: integer;
@@ -576,7 +596,7 @@ begin
   if Source = lbVoices then
   begin
     if (lbVoices.ItemIndex = -1) or (lbFiles.ItemIndex = -1) then Exit;
-    FTmpVoice.InitVoice;
+    //FTmpVoice.InitVoice;
     FTmpBank.GetVoice(lbVoices.ItemIndex + 1, FTmpVoice);
     FBank.SetVoice((Sender as TLabeledEdit).Tag, FTmpVoice);
     FBank.SetVoiceName((Sender as TLabeledEdit).Tag,
@@ -825,6 +845,12 @@ begin
   end;
 end;
 
+procedure TfrmMain.imLogoClick(Sender: TObject);
+begin
+  untVMEM_View.Editing := False;
+  frmVMEM_View.Show;
+end;
+
 procedure TfrmMain.LoadLastStateBank;
 var
   dmp: TMemoryStream;
@@ -913,6 +939,14 @@ begin
   Unused(DragObject);
   if lbFiles.ItemIndex <> -1 then
     dragItem := lbFiles.ItemIndex;
+end;
+
+procedure TfrmMain.lbVoicesClick(Sender: TObject);
+begin
+  if (lbVoices.ItemIndex = -1) or (lbFiles.ItemIndex = -1) then Exit;
+  FTmpBank.GetVoice(lbVoices.ItemIndex + 1, FTmpVoice);
+  untVMEM_View.VoiceName := lbVoices.Items[lbVoices.ItemIndex];
+  frmVMEM_View.FillSG(FTmpVoice.Get_VMEM_Params);
 end;
 
 procedure TfrmMain.lbVoicesStartDrag(Sender: TObject; var DragObject: TDragObject);
@@ -1007,6 +1041,8 @@ begin
         lbVoices.Items.Clear;
         lbVoices.Items.Add(fName);
         FTmpVoice.Load_VMEM_FromStream(dmp, i);
+        untVMEM_View.VoiceName := fName;
+        frmVMEM_View.FillSG(FTmpVoice.Get_VMEM_Params);
         FTmpVoice.SetVoiceName(fName);
         FTmpBank.SetVoice(1, FTmpVoice);
         FTmpBank.SetVoiceName(1, FTmpVoice.GetVoiceName);
