@@ -21,9 +21,9 @@ object frmMain: TfrmMain
     Height = 700
     Top = 0
     Width = 688
-    ActivePage = tsFiles
+    ActivePage = tsDatabase
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     object tsFiles: TTabSheet
       Caption = 'Files'
@@ -143,6 +143,7 @@ object frmMain: TfrmMain
         Top = 28
         Width = 680
         Align = alClient
+        AutoEdit = False
         AutoFillColumns = True
         ColCount = 2
         ColumnClickSorts = True
@@ -161,7 +162,6 @@ object frmMain: TfrmMain
         FixedCols = 0
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goEditing, goThumbTracking, goSmoothScroll, goHeaderHotTracking]
         TabOrder = 0
-        OnAfterSelection = sgDBAfterSelection
         OnBeforeSelection = sgDBBeforeSelection
         OnClick = sgDBClick
         OnDragOver = sgDBDragOver

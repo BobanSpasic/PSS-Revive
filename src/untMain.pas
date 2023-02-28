@@ -229,7 +229,6 @@ type
     procedure pnSlotClick(Sender: TObject);
     procedure seFontSizeChange(Sender: TObject);
     procedure sePopUpDurChange(Sender: TObject);
-    procedure sgDBAfterSelection(Sender: TObject; aCol, aRow: integer);
     procedure sgDBBeforeSelection(Sender: TObject; aCol, aRow: integer);
     procedure sgDBClick(Sender: TObject);
     procedure sgDBDragOver(Sender, Source: TObject; X, Y: integer;
@@ -284,7 +283,7 @@ var
   DBName: string;
   HomeDir: string;
   //AppDir: string;
-  compArray: array [0..3] of string;
+  compArray: array [0..1] of string;
   compList: TStringList;
   LastSelectedRow: integer;
   SQLProxy: TSQLProxy;
@@ -1206,12 +1205,6 @@ begin
   PopUpDuration := sePopUpDur.Value;
 end;
 
-procedure TfrmMain.sgDBAfterSelection(Sender: TObject; aCol, aRow: integer);
-begin
-  lastSelectedRow := aRow;
-  Unused(aCol);
-end;
-
 procedure TfrmMain.sgDBBeforeSelection(Sender: TObject; aCol, aRow: integer);
 var
   c: integer;
@@ -1220,8 +1213,11 @@ begin
   for c := 0 to 1 do
   begin
     if aRow < sgDB.RowCount then
+    begin
       //sometimes aRow is greater than the row count
       compArray[c] := sgDB.Cells[c, aRow];
+      lastSelectedRow := aRow;
+    end;
   end;
 end;
 
