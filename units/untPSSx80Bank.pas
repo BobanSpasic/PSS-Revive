@@ -116,6 +116,7 @@ begin
       begin
         FPSSx80BankParams[i].Load_VMEM_FromStream(aStream, aStream.Position);
         FPSSx80BankParams[i].FPSSx80_VCED_Params.BANK := i - 1;
+        FPSSx80BankParams[i].FPSSx80_VMEM_Params.BANK := i - 1;
       end;
     end;
   except
@@ -179,7 +180,7 @@ begin
     aStream.WriteByte($43);
     aStream.WriteByte($76);
     aStream.WriteByte($00);
-    FPSSx80BankParams[i].Save_VMEM_ToStream(i, aStream);
+    FPSSx80BankParams[i].Save_VMEM_ToStream(i - 1, aStream);
     aStream.WriteByte(FPSSx80BankParams[i].GetChecksum);
     aStream.WriteByte($F7);
   end;
@@ -195,7 +196,7 @@ begin
     aStream.WriteByte($43);
     aStream.WriteByte($76);
     aStream.WriteByte($00);
-    FPSSx80BankParams[i].Save_VMEM_ToStream(i, aStream);
+    FPSSx80BankParams[i].Save_VMEM_ToStream(i - 1, aStream);
     aStream.WriteByte(FPSSx80BankParams[i].GetChecksum);
     aStream.WriteByte($F7);
   end;

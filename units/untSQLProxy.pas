@@ -353,7 +353,7 @@ begin
   if SQLite3Con.Connected then
   begin
     SQLQuery.Close;
-    SQLQuery.SQL.Text := 'SELECT COUNT(*) AS cnt FROM BIN_VOICES;';
+    SQLQuery.SQL.Text := 'SELECT COUNT(*) AS cnt FROM VOICES;';
     SQLTrans.StartTransaction;
     SQLQuery.Open;
     Result := SQLQuery.Fields[0].AsInteger;

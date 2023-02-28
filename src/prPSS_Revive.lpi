@@ -19,48 +19,16 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="8"/>
-      <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive"/>
+      <BuildNr Value="13"/>
+      <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive" ProductName="PSS Revive"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Debug" Default="True"/>
-      <Item Name="Release FreeBSD QT5">
-        <MacroValues Count="1">
-          <Macro1 Name="LCLWidgetType" Value="qt5"/>
-        </MacroValues>
-        <CompilerOptions>
-          <Version Value="11"/>
-          <PathDelim Value="\"/>
-          <Target>
-            <Filename Value="..\bin\FreeBSD_Qt5\PSS_Revive"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\units;..\ext_units"/>
-            <UnitOutputDirectory Value="..\lib\$(TargetCPU)-$(TargetOS)"/>
-          </SearchPaths>
-          <CodeGeneration>
-            <SmartLinkUnit Value="True"/>
-            <Optimizations>
-              <OptimizationLevel Value="3"/>
-            </Optimizations>
-          </CodeGeneration>
-          <Linking>
-            <Debugging>
-              <GenerateDebugInfo Value="False"/>
-              <DebugInfoType Value="dsDwarf2Set"/>
-            </Debugging>
-            <LinkSmart Value="True"/>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
-          </Linking>
-        </CompilerOptions>
-      </Item>
-      <SharedMatrixOptions Count="1">
-        <Item1 ID="536535886330" Modes="Release FreeBSD QT5" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
+      <SharedMatrixOptions Count="4">
+        <Item1 ID="536535886330" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
+        <Item2 ID="997731029399" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item3 ID="281564970099" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item4 ID="218758216995" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -165,7 +133,18 @@
         <ComponentName Value="frmVMEM_View"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="untVMEM_View"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untLog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmMIDILog"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\ext_units\versionsupport.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VersionSupport"/>
       </Unit>
     </Units>
   </ProjectOptions>

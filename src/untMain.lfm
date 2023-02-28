@@ -301,7 +301,7 @@ object frmMain: TfrmMain
         AnchorSideBottom.Control = cbMidiOut
         Left = 40
         Height = 11
-        Top = 107
+        Top = 88
         Width = 45
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 10
@@ -309,16 +309,6 @@ object frmMain: TfrmMain
         Color = clDefault
         ParentColor = False
         Transparent = False
-      end
-      object mmLogSettings: TMemo
-        Left = 0
-        Height = 90
-        Top = 586
-        Width = 680
-        Align = alBottom
-        ReadOnly = True
-        ScrollBars = ssAutoBoth
-        TabOrder = 0
       end
       object cbMidiIn: TComboBox
         Cursor = crHandPoint
@@ -329,19 +319,19 @@ object frmMain: TfrmMain
         Color = clNone
         ItemHeight = 11
         OnChange = cbMidiInChange
-        TabOrder = 1
+        TabOrder = 0
       end
       object cbMidiOut: TComboBox
         AnchorSideLeft.Control = cbMidiIn
         Cursor = crHandPoint
         Left = 40
         Height = 19
-        Top = 128
+        Top = 109
         Width = 320
         Color = clNone
         ItemHeight = 11
         OnChange = cbMidiOutChange
-        TabOrder = 2
+        TabOrder = 1
       end
       object seFontSize: TSpinEdit
         AnchorSideRight.Control = cbMidiIn
@@ -352,7 +342,7 @@ object frmMain: TfrmMain
         Width = 50
         Anchors = [akTop, akRight]
         OnChange = seFontSizeChange
-        TabOrder = 3
+        TabOrder = 2
       end
       object lbFontSize: TLabel
         AnchorSideTop.Control = seFontSize
@@ -376,16 +366,16 @@ object frmMain: TfrmMain
         Width = 100
         Caption = 'Clear Voices DB'
         OnClick = btDeleteVoiceDBClick
-        TabOrder = 4
+        TabOrder = 3
       end
       object pnCredits: TPanel
         Left = 40
         Height = 138
-        Top = 440
+        Top = 464
         Width = 320
         ClientHeight = 138
         ClientWidth = 320
-        TabOrder = 5
+        TabOrder = 4
         object lbCredits1: TLabel
           Left = 148
           Height = 11
@@ -431,7 +421,7 @@ object frmMain: TfrmMain
         Anchors = [akTop, akRight]
         MinValue = 5
         OnChange = sePopUpDurChange
-        TabOrder = 6
+        TabOrder = 5
       end
       object lbPopUpDur: TLabel
         AnchorSideTop.Control = sePopUpDur
@@ -445,6 +435,62 @@ object frmMain: TfrmMain
         BorderSpacing.Right = 10
         Caption = 'PopUp Duration:'
         ParentColor = False
+      end
+      object lnkVisit: TECLink
+        AnchorSideLeft.Control = lbMidiIn
+        Left = 40
+        Height = 30
+        Hint = 'https://github.com/BobanSpasic/PSS-Revive'
+        Top = 624
+        Width = 378
+        Caption = 'Visit PSS-Revive on the web'
+        ColorHovered = clActiveCaption
+        Font.Color = 10400041
+        Font.Height = 30
+        Font.Name = 'Consolas'
+        Font.Style = [fsBold, fsItalic]
+        LinkType = eltWWW
+        ParentFont = False
+        ParentShowHint = False
+        OnClick = lnkCreditsClick
+      end
+      object cbShowLog: TCheckBox
+        Left = 40
+        Height = 19
+        Top = 142
+        Width = 95
+        Caption = 'Show log window'
+        OnChange = cbShowLogChange
+        TabOrder = 6
+      end
+      object pnInfo: TPanel
+        Left = 40
+        Height = 138
+        Top = 304
+        Width = 320
+        ClientHeight = 138
+        ClientWidth = 320
+        TabOrder = 7
+        object lbInfo: TLabel
+          Left = 148
+          Height = 11
+          Top = 8
+          Width = 25
+          Caption = 'Info:'
+          ParentColor = False
+        end
+        object mmInfo: TMemo
+          AnchorSideTop.Control = lbInfo
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 112
+          Top = 25
+          Width = 318
+          Align = alBottom
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          BorderSpacing.Top = 6
+          TabOrder = 0
+        end
       end
     end
   end
@@ -2195,6 +2241,7 @@ object frmMain: TfrmMain
       SpaceChar = '_'
     end
     object imLogo: TImage
+      Cursor = crHandPoint
       Left = 392
       Height = 123
       Top = 553
@@ -4074,6 +4121,14 @@ object frmMain: TfrmMain
       Caption = 'Store'
       OnClick = btStoreClick
       TabOrder = 78
+    end
+    object cbLivePreview: TCheckBox
+      Left = 256
+      Height = 19
+      Top = 656
+      Width = 80
+      Caption = 'Live Preview'
+      TabOrder = 79
     end
   end
   object SelectSysExDirectoryDialog1: TSelectDirectoryDialog

@@ -66,7 +66,7 @@ const
 
 const
   // define Your size of  System Exclusive buffer :
-  cMySysExBufferSize = 2048;
+  cMySysExBufferSize = 65535;
 
 
 

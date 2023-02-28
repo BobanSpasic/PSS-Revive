@@ -27,7 +27,7 @@ uses
 
 type
   TPSSx80_VMEM_Dump = array [0..32] of byte;
-  TPSSx80_VCED_Dump = array [0..36] of byte;
+  TPSSx80_VCED_Dump = array [0..71] of byte;
 
 type
   TPSSx80_VCED_Params = packed record
@@ -73,6 +73,43 @@ type
         VDT: byte;
         V: byte;
         S: byte;
+
+        D_3_7: byte;
+        D_4_7: byte;
+        D_15_76: byte;
+        D_15_210: byte;
+        D_16_7: byte;
+        D_16_32: byte;
+        D_17_Hi: byte;
+        D_17_Lo: byte;
+        D_18_Hi: byte;
+        D_18_Lo: byte;
+        D_19_Hi: byte;
+        D_19_Lo: byte;
+        D_20_Hi: byte;
+        D_21_Hi: byte;
+        D_22_7: byte;
+        D_23_Hi: byte;
+        D_23_Lo: byte;
+        D_24_54: byte;
+        D_24_Lo: byte;
+
+        D_25_Hi: byte;
+        D_25_Lo: byte;
+        D_26_Hi: byte;
+        D_26_Lo: byte;
+        D_27_Hi: byte;
+        D_27_Lo: byte;
+        D_28_Hi: byte;
+        D_28_Lo: byte;
+        D_29_Hi: byte;
+        D_29_Lo: byte;
+        D_30_Hi: byte;
+        D_30_Lo: byte;
+        D_31_Hi: byte;
+        D_31_Lo: byte;
+        D_32_Hi: byte;
+        D_32_Lo: byte;
       );
   end;
 
@@ -119,12 +156,12 @@ type
 type
   TPSSx80VoiceContainer = class(TPersistent)
   private
-    //FPSSx80_VCED_Params: TPSSx80_VCED_Params;
-    FPSSx80_VMEM_Params: TPSSx80_VMEM_Params;
-    FPSSx80_VoiceName: string;
+
   public
     FPSSx80_VCED_Params: TPSSx80_VCED_Params;
-    function Load_VMEM_FromStream(var aStream: TMemoryStream;
+    FPSSx80_VMEM_Params: TPSSx80_VMEM_Params;
+    FPSSx80_VoiceName: string;
+    function Load_VMEM_FromStream(const aStream: TMemoryStream;
       Position: integer): boolean;
     procedure InitVoice; //set defaults
     function Get_VMEM_Params: TPSSx80_VMEM_Params;
@@ -138,7 +175,7 @@ type
     procedure SetVoiceName(aVoiceName: string);
     procedure SysExVoiceToStream(var aStream: TMemoryStream);
     function CalculateHash: string;
-    function Unk_Param: Boolean;
+    function Unk_Param: boolean;
   end;
 
 function VCEDtoVMEM(aPar: TPSSx80_VCED_Params): TPSSx80_VMEM_Params;
@@ -152,41 +189,44 @@ var
 begin
   t.BANK := aPar.BANK and 7;
   t.M_DT1_MUL := ((aPar.M_DT1 and 15) shl 4) + (aPar.M_MUL and 15);
-  t.M_TL := aPar.M_TL and 127;
+  t.M_TL := ((aPar.D_3_7 shl 7) and 128) + aPar.M_TL and 127;
   t.M_LKS_HI_LKS_LO := ((aPar.M_LKS_HI and 15) shl 4) + (aPar.M_LKS_LO and 15);
   t.M_RKS_AR := ((aPar.M_RKS and 3) shl 6) + (aPar.M_AR and 63);
   t.M_AM_EN_DT2_D1R := ((aPar.M_AM_EN and 1) shl 7) + ((aPar.M_DT2 and 1) shl 6) +
     (aPar.M_D1R and 63);
   t.M_SIN_TBL_D2R := ((aPAr.M_SIN_TBL and 3) shl 6) + (aPar.M_D2R and 63);
   t.M_D1L_RR := ((aPar.M_D1L and 15) shl 4) + (aPar.M_RR and 15);
-  t.M_SRR := aPar.M_SRR and 15;
-  t.M_FB := (aPar.M_FB shl 3) and 56;
+  t.M_SRR := ((aPar.D_20_Hi shl 4) and 240) + (aPar.M_SRR and 15);
+  t.M_FB := ((aPar.D_15_76 shl 6) and 192) + ((aPar.M_FB shl 3) and 56) +
+    (aPar.D_15_210 and 7);
 
   t.C_DT1_MUL := ((aPar.C_DT1 and 15) shl 4) + (aPar.C_MUL and 15);
-  t.C_TL := aPar.C_TL and 127;
+  t.C_TL := ((aPar.D_4_7 shl 7) and 128) + aPar.C_TL and 127;
   t.C_LKS_HI_LKS_LO := ((aPar.C_LKS_HI and 15) shl 4) + (aPar.C_LKS_LO and 15);
   t.C_RKS_AR := ((aPar.C_RKS and 3) shl 6) + (aPar.C_AR and 63);
   t.C_AM_EN_DT2_D1R := ((aPar.C_AM_EN and 1) shl 7) + ((aPar.C_DT2 and 1) shl 6) +
     (aPar.C_D1R and 63);
   t.C_SIN_TBL_D2R := ((aPAr.C_SIN_TBL and 3) shl 6) + (aPar.C_D2R and 63);
   t.C_D1L_RR := ((aPar.C_D1L and 15) shl 4) + (aPar.C_RR and 15);
-  t.C_SRR := aPar.C_SRR and 15;
+  t.C_SRR := ((aPar.D_21_Hi shl 4) and 240) + (aPar.C_SRR and 15);
 
-  t.PMS_AMS := ((aPar.PMS shl 4) and 112) + (aPAr.AMS and 3);
-  t.VDT := aPar.VDT and 127;
-  t.V_S := ((aPar.V shl 7) and 128) + ((aPar.S shl 6) and 64);
-  t.Reserved_17 := 0;
-  t.Reserved_18 := 0;
-  t.Reserved_19 := 0;
-  t.Reserved_23 := 0;
-  t.Reserved_25 := 0;
-  t.Reserved_26 := 0;
-  t.Reserved_27 := 0;
-  t.Reserved_28 := 0;
-  t.Reserved_29 := 0;
-  t.Reserved_30 := 0;
-  t.Reserved_31 := 0;
-  t.Reserved_32 := 0;
+  t.PMS_AMS := ((aPar.D_16_7 shl 7) and 128) + ((aPar.PMS shl 4) and 112) +
+    (aPAr.AMS and 3) + ((aPar.D_16_32 shl 2) and 12);
+  t.VDT := ((aPar.D_22_7 shl 7) and 128) + (aPar.VDT and 127);
+  t.V_S := ((aPar.V shl 7) and 128) + ((aPar.S shl 6) and 64) +
+    ((aPar.D_24_54 shl 4) and 48) + (aPar.D_24_Lo and 15);
+  t.Reserved_17 := (aPar.D_17_Hi shl 4) + aPar.D_17_Lo;
+  t.Reserved_18 := (aPar.D_18_Hi shl 4) + aPar.D_18_Lo;
+  t.Reserved_19 := (aPar.D_19_Hi shl 4) + aPar.D_19_Lo;
+  t.Reserved_23 := (aPar.D_23_Hi shl 4) + aPar.D_23_Lo;
+  t.Reserved_25 := (aPar.D_25_Hi shl 4) + aPar.D_25_Lo;
+  t.Reserved_26 := (aPar.D_26_Hi shl 4) + aPar.D_26_Lo;
+  t.Reserved_27 := (aPar.D_27_Hi shl 4) + aPar.D_27_Lo;
+  t.Reserved_28 := (aPar.D_28_Hi shl 4) + aPar.D_28_Lo;
+  t.Reserved_29 := (aPar.D_29_Hi shl 4) + aPar.D_29_Lo;
+  t.Reserved_30 := (aPar.D_30_Hi shl 4) + aPar.D_30_Lo;
+  t.Reserved_31 := (aPar.D_31_Hi shl 4) + aPar.D_31_Lo;
+  t.Reserved_32 := (aPar.D_32_Hi shl 4) + aPar.D_32_Lo;
 
   Result := t;
 end;
@@ -236,20 +276,56 @@ begin
   t.V := (aPar.V_S shr 7) and 1;
   t.S := (aPar.V_S shr 6) and 1;
 
+  t.D_3_7 := (aPar.M_TL shr 7) and 1;
+  t.D_4_7 := (aPar.C_TL shr 7) and 1;
+  t.D_15_76 := (aPar.M_FB shr 6) and 3;
+  t.D_15_210 := aPar.M_FB and 7;
+  t.D_16_7 := (aPar.PMS_AMS shr 7) and 1;
+  t.D_16_32 := (aPar.PMS_AMS shr 2) and 3;
+  t.D_17_Hi := (aPar.Reserved_17 shr 4) and 15;
+  t.D_17_Lo := aPar.Reserved_17 and 15;
+  t.D_18_Hi := (aPar.Reserved_18 shr 4) and 15;
+  t.D_18_Lo := aPar.Reserved_18 and 15;
+  t.D_19_Hi := (aPar.Reserved_19 shr 4) and 15;
+  t.D_19_Lo := aPar.Reserved_19 and 15;
+  t.D_20_Hi := (aPar.M_SRR shr 4) and 15;
+  t.D_21_Hi := (aPar.C_SRR shr 4) and 15;
+  t.D_22_7 := (aPar.VDT shr 7) and 1;
+  t.D_23_Hi := (aPar.Reserved_23 shr 4) and 15;
+  t.D_23_Lo := aPar.Reserved_23 and 15;
+  t.D_24_54 := (aPar.V_S shr 4) and 3;
+  t.D_24_Lo := aPar.V_S and 15;
+
+  t.D_25_Hi := (aPar.Reserved_25 shr 4) and 15;
+  t.D_25_Lo := aPar.Reserved_25 and 15;
+  t.D_26_Hi := (aPar.Reserved_26 shr 4) and 15;
+  t.D_26_Lo := aPar.Reserved_26 and 15;
+  t.D_27_Hi := (aPar.Reserved_27 shr 4) and 15;
+  t.D_27_Lo := aPar.Reserved_27 and 15;
+  t.D_28_Hi := (aPar.Reserved_28 shr 4) and 15;
+  t.D_28_Lo := aPar.Reserved_28 and 15;
+  t.D_29_Hi := (aPar.Reserved_29 shr 4) and 15;
+  t.D_29_Lo := aPar.Reserved_29 and 15;
+  t.D_30_Hi := (aPar.Reserved_30 shr 4) and 15;
+  t.D_30_Lo := aPar.Reserved_30 and 15;
+  t.D_31_Hi := (aPar.Reserved_31 shr 4) and 15;
+  t.D_31_Lo := aPar.Reserved_31 and 15;
+  t.D_32_Hi := (aPar.Reserved_32 shr 4) and 15;
+  t.D_32_Lo := aPar.Reserved_32 and 15;
   Result := t;
 end;
 
-function TPSSx80VoiceContainer.GetVoiceName:string;
+function TPSSx80VoiceContainer.GetVoiceName: string;
 begin
   Result := FPSSx80_VoiceName;
 end;
 
 procedure TPSSx80VoiceContainer.SetVoiceName(aVoiceName: string);
 begin
-  FPSSx80_VoiceName:=aVoiceName;
+  FPSSx80_VoiceName := aVoiceName;
 end;
 
-function TPSSx80VoiceContainer.Load_VMEM_FromStream(var aStream: TMemoryStream;
+function TPSSx80VoiceContainer.Load_VMEM_FromStream(const aStream: TMemoryStream;
   Position: integer): boolean;
 var
   i: integer;
@@ -264,7 +340,7 @@ begin
     Exit;
   try
     test_byte := aStream.ReadByte;
-    if test_byte = $F0 then
+    if test_byte = $F0 then             //reading from SysEx or from DB
       aStream.Position := Position + 4
     else
       aStream.Position := Position;
@@ -274,9 +350,13 @@ begin
       nibble_lo := aStream.ReadByte;
       FPSSx80_VMEM_Params.params[i] := ((nibble_hi and 15) shl 4) + (nibble_lo and 15);
     end;
-    //load checksum and $F0
-    nibble_hi := aStream.ReadByte;
-    nibble_lo := aStream.ReadByte;
+    if test_byte = $F0 then
+    begin
+      //load checksum and $F0
+      //needed at loading from a bulk dump (5xVoice)
+      nibble_hi := aStream.ReadByte;
+      nibble_lo := aStream.ReadByte;
+    end;
 
     FPSSx80_VCED_Params := VMEMtoVCED(FPSSx80_VMEM_Params);
     Result := True;
@@ -289,7 +369,7 @@ procedure TPSSx80VoiceContainer.InitVoice;
 begin
   GetDefinedValues(PSSx80, fInit, FPSSx80_VCED_Params.params);
   FPSSx80_VMEM_Params := VCEDtoVMEM(FPSSx80_VCED_Params);
-  FPSSx80_VoiceName:='Sine Wave';
+  FPSSx80_VoiceName := 'Sine Wave';
 end;
 
 function TPSSx80VoiceContainer.Get_VMEM_Params: TPSSx80_VMEM_Params;
@@ -396,9 +476,7 @@ begin
   aStream.WriteByte($F7);
 end;
 
-function TPSSx80VoiceContainer.Unk_Param: Boolean;
-const
-  unk: array[0..32] of integer = (0,0,0,128,128,0,0,0,0,0,0,0,0,0,0, 199, 140, 255, 255, 255, 240, 240, 128,255,63,255,255,255,255,255,255,255,255);
+function TPSSx80VoiceContainer.Unk_Param: boolean;
 begin
   Result := False;
   if (FPSSx80_VMEM_Params.params[3] and 128) <> 0 then Result := True;

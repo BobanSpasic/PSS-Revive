@@ -7,8 +7,7 @@
  Author: Boban Spasic
 
 }
-//ToDo DB and Edit auto preview
-//ToDo MIDI Receive
+//ToDo DB auto preview
 //ToDo Save SysEx - bank or single voices
 
 unit untMain;
@@ -24,8 +23,8 @@ uses
   {$ENDIF}
   SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
   Grids, Spin, atshapeline, ECEditBtns, ECLink, ECSlider, ECSpinCtrls, Types,
-  LCLIntf, LazFileUtils, LCLType, MaskEdit, AdvLed, LazUTF8,
-  TAGraph, TASeries, TAGUIConnectorBGRA, Math
+  LCLIntf, LazFileUtils, LCLType, MaskEdit, Buttons, AdvLed, LazUTF8,
+  TAGraph, TASeries, TAGUIConnectorBGRA, Math, SyncObjs, VersionSupport
   {$IFDEF WINDOWS}
   ,MIDI, untUnPortMIDI
   {$ENDIF}
@@ -33,7 +32,7 @@ uses
   ,untLinuxMIDI, PortMidi
   {$ENDIF}
   , untPSSx80Voice, untPSSx80Bank, untSQLProxy, untUtils, untPSSx80Utils,
-  untMiniINI, untPopUp, untVMEM_View;
+  untMiniINI, untPopUp, untVMEM_View, untLog;
 
 type
 
@@ -53,6 +52,8 @@ type
     cbMidiIn: TComboBox;
     cbMidiOut: TComboBox;
     ChartGUIConnectorBGRA1: TChartGUIConnectorBGRA;
+    cbLivePreview: TCheckBox;
+    cbShowLog: TCheckBox;
     gbLKS: TGroupBox;
     gbENV: TGroupBox;
     Graph: TChart;
@@ -65,6 +66,7 @@ type
     imLogo: TImage;
     imLKS_HI: TImage;
     imLKS_LO: TImage;
+    lbInfo: TLabel;
     lbMod: TLabel;
     lbCredits1: TLabel;
     lbFontSize: TLabel;
@@ -74,6 +76,7 @@ type
     lbPopUpDur: TLabel;
     lnkCredits2: TECLink;
     lnkCredits3: TECLink;
+    lnkVisit: TECLink;
     MaskEdit1: TMaskEdit;
     MaskEdit10: TMaskEdit;
     MaskEdit11: TMaskEdit;
@@ -108,10 +111,11 @@ type
     MaskEdit7: TMaskEdit;
     MaskEdit8: TMaskEdit;
     MaskEdit9: TMaskEdit;
-    mmLogSettings: TMemo;
+    mmInfo: TMemo;
     ModulatorRR: TLineSeries;
     ModulatorSRR: TLineSeries;
     pnCredits: TPanel;
+    pnInfo: TPanel;
     S: TECSlider;
     AMS: TECSlider;
     seFontSize: TSpinEdit;
@@ -201,6 +205,7 @@ type
     procedure btStoreClick(Sender: TObject);
     procedure cbMidiInChange(Sender: TObject);
     procedure cbMidiOutChange(Sender: TObject);
+    procedure cbShowLogChange(Sender: TObject);
     procedure C_LKSChange(Sender: TObject);
     procedure edSlotEditingDone(Sender: TObject);
     procedure edSlotDragDrop(Sender, Source: TObject; X, Y: integer);
@@ -253,6 +258,7 @@ type
     procedure LEDYellow(aVoiceNr: integer);
 
   private
+    FCriticalSection: TCriticalSection;
     {$IFDEF WINDOWS}
     procedure MIDIdataIn(var msg: TMessage); message WM_MIDIDATA_ARRIVED;
     {$ENDIF}
@@ -285,6 +291,7 @@ var
   LastClickedFile: integer;
   PopUpDuration: integer;
   FTmpVoice: TPSSx80VoiceContainer;
+  FEditVoice: TPSSx80VoiceContainer;
   FTmpBank: TPSSx80BankContainer;
   FBank: TPSSx80BankContainer;
   CurrentBank: integer;
@@ -372,28 +379,31 @@ end;
 procedure TfrmMain.OnSysExData(const aDeviceIndex: integer;
   const aStream: TMemoryStream);
 var
-  start: integer;
-  isBank: boolean;
-  i: integer;
-  FStream: TMemoryStream;
+  VoiceNr: integer;
 begin
   Unused(aDeviceIndex);
   try
-    FStream := TMemoryStream.Create;
-    FStream.LoadFromStream(aStream);
-    start := 0;
-    isBank := False;
-    if ContainsPSSx80Data(FStream, start, isBank) then
-      if isBank then
+    FCriticalSection.Acquire;
+    VoiceNr := 1;
+    if aStream.Size = 72 then
+    begin
+      frmMIDILog.InLog(StreamToVCEDHex(aStream));
+      if ContainsPSSx80Voice(aStream, VoiceNr) then
       begin
-        FBank.LoadBankFromStream(FStream, start);
-        for i := 1 to 5 do
-          FBank.SetVoiceName(i, 'Received ' + IntToStr(i));
-        VoiceToGUI(1);
-        PopUp('Bank dump' + #13#10 + 'received', PopUpDuration);
+        FTmpVoice.Load_VMEM_FromStream(aStream, 0);
+        FBank.SetVoice(VoiceNr, FTmpVoice);
+        FBank.SetVoiceName(VoiceNr, 'Received ' + IntToStr(VoiceNr));
       end;
+    end;
+    FCriticalSection.Leave;
   finally
-    FStream.Free;
+    VoiceToGUI(VoiceNr);
+    CurrentBank := VoiceNr;
+    edSlot01.Text := FBank.GetVoiceName(1);
+    edSlot02.Text := FBank.GetVoiceName(2);
+    edSlot03.Text := FBank.GetVoiceName(3);
+    edSlot04.Text := FBank.GetVoiceName(4);
+    edSlot05.Text := FBank.GetVoiceName(5);
   end;
 end;
 
@@ -490,18 +500,27 @@ end;
 
 procedure TfrmMain.alBankClick(Sender: TObject);
 begin
-  FBank.GetVoice((Sender as TAdvLed).Tag, FTmpVoice);
-  frmVMEM_View.FillSG(FTmpVoice.Get_VMEM_Params);
-  untVMEM_View.VoiceName := FBank.GetVoiceName((Sender as TAdvLed).Tag);
-  untVMEM_View.Editing := True;
+  LoadingBank := True;
+  //Save editor state to the current bank before changing bank
+  GUIToVoice(CurrentBank);
+  CurrentBank := (Sender as TAdvLed).Tag;
+  //Change bank
+  VoiceToGUI(CurrentBank);
+  LoadingBank := False;
   frmVMEM_View.ShowModal;
   //after close
   if untVMEM_View.SaveToBank <> 0 then
     //zero means the form is closed without click on Save to Bank X
   begin
     if Assigned(untVMEM_View.TmpVoice) then
-      FBank.SetVoice(untVMEM_View.SaveToBank, untVMEM_View.TmpVoice);
-    FBank.SetVoiceName(untVMEM_View.SaveToBank, untVMEM_View.VoiceName);
+    begin
+      CurrentBank := untVMEM_View.SaveToBank;
+      FBank.SetVoice(CurrentBank, untVMEM_View.TmpVoice);
+      FBank.SetVoiceName(CurrentBank, copy(untVMEM_View.VoiceName,
+        10, Length(untVMEM_View.VoiceName) - 10));
+      VoiceToGUI(CurrentBank);
+      LEDYellow(CurrentBank);
+    end;
   end;
 end;
 
@@ -519,12 +538,12 @@ begin
     err := MidiInput.Open(FMidiInInt);
     if (err = 0) or (err = 1) then
     begin
-      mmLogSettings.Lines.Add('Opening port ' + IntToStr(FMidiInInt) + ' successfull');
+      frmMIDILog.InLog('Opening port ' + IntToStr(FMidiInInt) + ' successfull');
       FMidiIsActive := True;
     end
     else
     begin
-      mmLogSettings.Lines.Add('Opening port ' + IntToStr(FMidiInInt) +
+      frmMIDILog.InLog('Opening port ' + IntToStr(FMidiInInt) +
         ' failed: ' + Pm_GetErrorText(err));
       cbMidiIn.ItemIndex := -1;
     end;
@@ -545,16 +564,24 @@ begin
     err := MidiOutput.Open(FMidiOutInt);
     if (err = 0) or (err = 1) then
     begin
-      mmLogSettings.Lines.Add('Opening port ' + IntToStr(FMidiOutInt) + ' successful');
+      frmMIDILog.OutLog('Opening port ' + IntToStr(FMidiOutInt) + ' successful');
       FMidiIsActive := True;
     end
     else
     begin
-      mmLogSettings.Lines.Add('Opening port ' + IntToStr(FMidiOutInt) +
+      frmMIDILog.OutLog('Opening port ' + IntToStr(FMidiOutInt) +
         ' failed: ' + Pm_GetErrorText(err));
       cbMidiOut.ItemIndex := -1;
     end;
   end;
+end;
+
+procedure TfrmMain.cbShowLogChange(Sender: TObject);
+begin
+  if cbShowLog.Checked then
+    frmMIDILog.Show
+  else
+    frmMIDILog.Close;
 end;
 
 procedure TfrmMain.C_LKSChange(Sender: TObject);
@@ -583,7 +610,10 @@ begin
     dmp.Clear;
     FTmpBank.AppendSysExBankToStream(dmp);
     for i := 1 to 5 do
+    begin
+      LEDGreen(i);
       FBank.SetVoiceName(i, FTmpBank.GetVoiceName(i));
+    end;
     FBank.LoadBankFromStream(dmp, 0);
     edSlot01.Text := FBank.GetVoiceName(1);
     edSlot02.Text := FBank.GetVoiceName(2);
@@ -603,6 +633,7 @@ begin
       FTmpBank.GetVoiceName(lbVoices.ItemIndex + 1));
     (Sender as TLabeledEdit).Text :=
       FBank.GetVoiceName((Sender as TLabeledEdit).Tag);
+    LEDGreen((Sender as TLabeledEdit).Tag);
   end;
 
   if Source = sgDB then
@@ -615,6 +646,7 @@ begin
       FBank.SetVoiceName((Sender as TLabeledEdit).Tag, sgDB.Cells[0, dragItem]);
       (Sender as TLabeledEdit).Text :=
         FBank.GetVoiceName((Sender as TLabeledEdit).Tag);
+      LEDGreen((Sender as TLabeledEdit).Tag);
     end;
     dmp.Free;
   end;
@@ -644,7 +676,9 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Unused(CloseAction);
+  FreeAndNil(FCriticalSection);
   FTmpVoice.Free;
+  FEditVoice.Free;
   FTmpBank.Free;
   FBank.Free;
   SQLProxy.Free;
@@ -694,6 +728,7 @@ var
   i: integer;
   ini: TMiniINIFile;
 begin
+  FCriticalSection := TCriticalSection.Create;
   CurrentBank := 1;
   LoadingBank := False;
   frmMain.FormStyle := fsNormal;
@@ -702,6 +737,7 @@ begin
     'PSS Revive');
   if not DirectoryExists(HomeDir) then CreateDir(HomeDir);
   FTmpVoice := TPSSx80VoiceContainer.Create;
+  FEditVoice := TPSSx80VoiceContainer.Create;
   FTmpBank := TPSSx80BankContainer.Create;
   FBank := TPSSx80BankContainer.Create;
   FTmpVoice.InitVoice;
@@ -827,6 +863,11 @@ begin
   finally
     ini.Free;
   end;
+  mmInfo.Lines.Add('PSS Revive version ' + GetFileVersion);
+  mmInfo.Lines.Add('');
+  mmInfo.Lines.Add('Built for ' + GetTargetInfo);
+  mmInfo.Lines.Add('Compiler ' + GetCompilerInfo + ' on ' + GetCompiledDate);
+  mmInfo.Lines.Add('Widgetset ' + GetLCLVersion + ' and ' + GetWidgetset);
 end;
 
 procedure TfrmMain.imLKS_LOClick(Sender: TObject);
@@ -926,6 +967,7 @@ begin
     FBank.LoadBankFromStream(dmp, 0);
     for i := 1 to 5 do
     begin
+      LEDGreen(i);
       FBank.SetVoiceName(i, FTmpBank.GetVoiceName(i));
       TLabeledEdit(FindComponent(Format('edSlot%.2d', [i]))).Text :=
         FBank.GetVoiceName(i);
@@ -966,6 +1008,7 @@ var
   i: integer;
   currVal: integer;
   minVal, maxVal: integer;
+  voiceStream: TMemoryStream;
 begin
   for i := 0 to pnBankSlots.ControlCount - 1 do
     if (pnBankSlots.Controls[i].Tag = (Sender as TMaskEdit).Tag) and
@@ -979,6 +1022,18 @@ begin
       if currVal < minVal then currVal := minVal;
       (pnBankSlots.Controls[i] as TECSlider).Position := currVal;
     end;
+
+  if cbLivePreview.Checked and not LoadingBank then
+  begin
+    GUIToVoice(CurrentBank);
+    voiceStream := TMemoryStream.Create;
+    //FBank.GetVoice(CurrentBank, FEditVoice);  - included in GUIToVoice
+    FEditVoice.SysExVoiceToStream(voiceStream);
+    frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
+    MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
+    MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
+    voiceStream.Free;
+  end;
 end;
 
 procedure TfrmMain.M_LKSChange(Sender: TObject);
@@ -992,6 +1047,7 @@ end;
 procedure TfrmMain.SliderLinkedEdit(Sender: TObject);
 var
   i: integer;
+  voiceStream: TMemoryStream;
 begin
   if not LoadingBank then LEDYellow(CurrentBank);
   for i := 0 to pnBankSlots.ControlCount - 1 do
@@ -1003,6 +1059,18 @@ begin
     ilSIN_TBL.GetBitmap(trunc(M_SIN_TBL.Position), imM_SIN_TBL.Picture.Bitmap);
   if Sender = C_SIN_TBL then
     ilSIN_TBL.GetBitmap(trunc(C_SIN_TBL.Position), imC_SIN_TBL.Picture.Bitmap);
+
+  if cbLivePreview.Checked and not LoadingBank then
+  begin
+    GUIToVoice(CurrentBank);
+    voiceStream := TMemoryStream.Create;
+    //FBank.GetVoice(CurrentBank, FEditVoice);   - included in GUIToVoice
+    FEditVoice.SysExVoiceToStream(voiceStream);
+    frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
+    MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
+    MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
+    voiceStream.Free;
+  end;
 end;
 
 procedure TfrmMain.SliderChange(Sender: TObject);
@@ -1014,7 +1082,11 @@ end;
 procedure TfrmMain.pnSlotClick(Sender: TObject);
 begin
   LoadingBank := True;
-  VoiceToGUI((Sender as TPanel).Tag);
+  //Save editor state to the current bank before changing bank
+  GUIToVoice(CurrentBank);
+  CurrentBank := (Sender as TPanel).Tag;
+  //Change bank
+  VoiceToGUI(CurrentBank);
   LoadingBank := False;
 end;
 
@@ -1073,6 +1145,7 @@ begin
     try
       bankStream := TMemoryStream.Create;
       FBank.SysExBankToStream(bankStream);
+      frmMIDILog.OutLog('Send dump: ' + StreamToVCEDHex(bankStream));
       err := MidiOutput.SendSysEx(FMidiOutInt, bankStream);
       if (err = 0)
         {$IFNDEF WINDOWS}
@@ -1169,6 +1242,7 @@ begin
       SQLProxy.GetVoice(ID, dmp);
       FTmpVoice.Load_VMEM_FromStream(dmp, 0);
       FTmpVoice.SysExVoiceToStream(voiceStream);
+      frmMIDILog.OutLog('DB Live preview: ' + StreamToVCEDHex(voiceStream));
       MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
     finally
       dmp.Free;
@@ -1281,57 +1355,62 @@ var
   dtVal: integer;
   i: integer;
 begin
-  FTmpVoice.Set_VCED_Params(FBank.GetVCED(aVoiceNr));
+  //FBank.GetVoice(aVoiceNr, FEditVoice);    //just VMEM
+  FEditVoice.Set_VCED_Params(FBank.GetVCED(aVoiceNr)); //VMEM and VCED
+  untVMEM_View.VoiceName := 'Bank ' + IntToStr(CurrentBank) + ' - ' +
+    FBank.GetVoiceName(aVoiceNr);
+  untVMEM_View.Editing := True;
+  frmVMEM_View.FillSG(FEditVoice.Get_VMEM_Params);
+
   LEDs(aVoiceNr);
   CurrentBank := aVoiceNr;
 
-  M_MUL.Position := FTmpVoice.Get_VCED_Params.M_MUL;
-  //ToDo check if DT1 is OK
-  dtSgn := FTmpVoice.Get_VCED_Params.M_DT1 and 8;
-  dtVal := FTmpVoice.Get_VCED_Params.M_DT1 and 7;
+  M_MUL.Position := FEditVoice.Get_VCED_Params.M_MUL;
+  dtSgn := FEditVoice.Get_VCED_Params.M_DT1 and 8;
+  dtVal := FEditVoice.Get_VCED_Params.M_DT1 and 7;
   if dtSgn > 0 then dtVal := -dtVal;
   M_DT1.Position := dtVal;
-  M_DT2.Position := FTmpVoice.Get_VCED_Params.M_DT2;
-  M_SIN_TBL.Position := FTmpVoice.Get_VCED_Params.M_SIN_TBL;
-  M_AM_EN.Position := FTmpVoice.Get_VCED_Params.M_AM_EN;
+  M_DT2.Position := FEditVoice.Get_VCED_Params.M_DT2;
+  M_SIN_TBL.Position := FEditVoice.Get_VCED_Params.M_SIN_TBL;
+  M_AM_EN.Position := FEditVoice.Get_VCED_Params.M_AM_EN;
 
-  M_AR.Position := FTmpVoice.Get_VCED_Params.M_AR;
-  M_D1R.Position := FTmpVoice.Get_VCED_Params.M_D1R;
-  M_D1L.Position := FTmpVoice.Get_VCED_Params.M_D1L;
-  M_D2R.Position := FTmpVoice.Get_VCED_Params.M_D2R;
-  M_RR.Position := FTmpVoice.Get_VCED_Params.M_RR;
-  M_SRR.Position := FTmpVoice.Get_VCED_Params.M_SRR;
-  M_RKS.Position := FTmpVoice.Get_VCED_Params.M_RKS;
-  M_LKS_LO.Position := FTmpVoice.Get_VCED_Params.M_LKS_LO;
-  M_LKS_HI.Position := FTmpVoice.Get_VCED_Params.M_LKS_HI;
-  M_FB.Position := FTmpVoice.Get_VCED_Params.M_FB;
-  M_TL.Position := 99 - min(99, FTmpVoice.Get_VCED_Params.M_TL);
+  M_AR.Position := FEditVoice.Get_VCED_Params.M_AR;
+  M_D1R.Position := FEditVoice.Get_VCED_Params.M_D1R;
+  M_D1L.Position := FEditVoice.Get_VCED_Params.M_D1L;
+  M_D2R.Position := FEditVoice.Get_VCED_Params.M_D2R;
+  M_RR.Position := FEditVoice.Get_VCED_Params.M_RR;
+  M_SRR.Position := FEditVoice.Get_VCED_Params.M_SRR;
+  M_RKS.Position := FEditVoice.Get_VCED_Params.M_RKS;
+  M_LKS_LO.Position := FEditVoice.Get_VCED_Params.M_LKS_LO;
+  M_LKS_HI.Position := FEditVoice.Get_VCED_Params.M_LKS_HI;
+  M_FB.Position := FEditVoice.Get_VCED_Params.M_FB;
+  M_TL.Position := 99 - min(99, FEditVoice.Get_VCED_Params.M_TL);
 
-  C_MUL.Position := FTmpVoice.Get_VCED_Params.C_MUL;
-  dtSgn := FTmpVoice.Get_VCED_Params.C_DT1 and 8;
-  dtVal := FTmpVoice.Get_VCED_Params.C_DT1 and 7;
+  C_MUL.Position := FEditVoice.Get_VCED_Params.C_MUL;
+  dtSgn := FEditVoice.Get_VCED_Params.C_DT1 and 8;
+  dtVal := FEditVoice.Get_VCED_Params.C_DT1 and 7;
   if dtSgn > 0 then dtVal := -dtVal;
   C_DT1.Position := dtVal;
-  C_DT2.Position := FTmpVoice.Get_VCED_Params.C_DT2;
-  C_SIN_TBL.Position := FTmpVoice.Get_VCED_Params.C_SIN_TBL;
-  C_AM_EN.Position := FTmpVoice.Get_VCED_Params.C_AM_EN;
+  C_DT2.Position := FEditVoice.Get_VCED_Params.C_DT2;
+  C_SIN_TBL.Position := FEditVoice.Get_VCED_Params.C_SIN_TBL;
+  C_AM_EN.Position := FEditVoice.Get_VCED_Params.C_AM_EN;
 
-  C_AR.Position := FTmpVoice.Get_VCED_Params.C_AR;
-  C_D1R.Position := FTmpVoice.Get_VCED_Params.C_D1R;
-  C_D1L.Position := FTmpVoice.Get_VCED_Params.C_D1L;
-  C_D2R.Position := FTmpVoice.Get_VCED_Params.C_D2R;
-  C_RR.Position := FTmpVoice.Get_VCED_Params.C_RR;
-  C_SRR.Position := FTmpVoice.Get_VCED_Params.C_SRR;
-  C_RKS.Position := FTmpVoice.Get_VCED_Params.C_RKS;
-  C_LKS_LO.Position := FTmpVoice.Get_VCED_Params.C_LKS_LO;
-  C_LKS_HI.Position := FTmpVoice.Get_VCED_Params.C_LKS_HI;
-  C_TL.Position := 99 - min(99, FTmpVoice.Get_VCED_Params.C_TL);
+  C_AR.Position := FEditVoice.Get_VCED_Params.C_AR;
+  C_D1R.Position := FEditVoice.Get_VCED_Params.C_D1R;
+  C_D1L.Position := FEditVoice.Get_VCED_Params.C_D1L;
+  C_D2R.Position := FEditVoice.Get_VCED_Params.C_D2R;
+  C_RR.Position := FEditVoice.Get_VCED_Params.C_RR;
+  C_SRR.Position := FEditVoice.Get_VCED_Params.C_SRR;
+  C_RKS.Position := FEditVoice.Get_VCED_Params.C_RKS;
+  C_LKS_LO.Position := FEditVoice.Get_VCED_Params.C_LKS_LO;
+  C_LKS_HI.Position := FEditVoice.Get_VCED_Params.C_LKS_HI;
+  C_TL.Position := 99 - min(99, FEditVoice.Get_VCED_Params.C_TL);
 
-  PMS.Position := FTmpVoice.Get_VCED_Params.PMS;
-  AMS.Position := FTmpVoice.Get_VCED_Params.AMS;
-  VDT.Position := FTmpVoice.Get_VCED_Params.VDT;
-  V.Position := FTmpVoice.Get_VCED_Params.V;
-  S.Position := FTmpVoice.Get_VCED_Params.S;
+  PMS.Position := FEditVoice.Get_VCED_Params.PMS;
+  AMS.Position := FEditVoice.Get_VCED_Params.AMS;
+  VDT.Position := FEditVoice.Get_VCED_Params.VDT;
+  V.Position := FEditVoice.Get_VCED_Params.V;
+  S.Position := FEditVoice.Get_VCED_Params.S;
 
   for i := 0 to pnBankSlots.ControlCount - 1 do
     if (pnBankSlots.Controls[i] is TECSlider) then
@@ -1345,56 +1424,57 @@ var
   dtSgn: integer;
   dtVal: integer;
 begin
-  FTmpVoice.FPSSx80_VCED_Params.M_MUL := trunc(M_MUL.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_MUL := trunc(M_MUL.Position);
   if M_DT1.Position < 0 then dtSgn := 8
   else
     dtSgn := 0;
-  dtVal := trunc(M_DT1.Position) + dtSgn;
-  FTmpVoice.FPSSx80_VCED_Params.M_DT1 := dtVal;
-  FTmpVoice.FPSSx80_VCED_Params.M_DT2 := trunc(M_DT2.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_SIN_TBL := trunc(M_SIN_TBL.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_AM_EN := trunc(M_AM_EN.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_AR := trunc(M_AR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D1R := trunc(M_D1R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D1L := trunc(M_D1L.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_D2R := trunc(M_D2R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_RR := trunc(M_RR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_SRR := trunc(M_SRR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_RKS := trunc(M_RKS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_LKS_LO := trunc(M_LKS_LO.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_LKS_HI := trunc(M_LKS_HI.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_FB := trunc(M_FB.Position);
-  FTmpVoice.FPSSx80_VCED_Params.M_TL := 99 - trunc(M_TL.Position);
+  dtVal := abs(trunc(M_DT1.Position)) + dtSgn;
+  FEditVoice.FPSSx80_VCED_Params.M_DT1 := dtVal;
+  FEditVoice.FPSSx80_VCED_Params.M_DT2 := trunc(M_DT2.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_SIN_TBL := trunc(M_SIN_TBL.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_AM_EN := trunc(M_AM_EN.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_AR := trunc(M_AR.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_D1R := trunc(M_D1R.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_D1L := trunc(M_D1L.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_D2R := trunc(M_D2R.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_RR := trunc(M_RR.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_SRR := trunc(M_SRR.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_RKS := trunc(M_RKS.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_LKS_LO := trunc(M_LKS_LO.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_LKS_HI := trunc(M_LKS_HI.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_FB := trunc(M_FB.Position);
+  FEditVoice.FPSSx80_VCED_Params.M_TL := 99 - trunc(M_TL.Position);
 
-  FTmpVoice.FPSSx80_VCED_Params.C_MUL := trunc(C_MUL.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_MUL := trunc(C_MUL.Position);
   if C_DT1.Position < 0 then dtSgn := 8
   else
     dtSgn := 0;
-  dtVal := trunc(C_DT1.Position) + dtSgn;
-  FTmpVoice.FPSSx80_VCED_Params.C_DT1 := dtVal;
-  FTmpVoice.FPSSx80_VCED_Params.C_DT2 := trunc(C_DT2.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_SIN_TBL := trunc(C_SIN_TBL.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_AM_EN := trunc(C_AM_EN.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_AR := trunc(C_AR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D1R := trunc(C_D1R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D1L := trunc(C_D1L.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_D2R := trunc(C_D2R.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_RR := trunc(C_RR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_SRR := trunc(C_SRR.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_RKS := trunc(C_RKS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_LKS_LO := trunc(C_LKS_LO.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_LKS_HI := trunc(C_LKS_HI.Position);
-  FTmpVoice.FPSSx80_VCED_Params.C_TL := 99 - trunc(C_TL.Position);
+  dtVal := abs(trunc(C_DT1.Position)) + dtSgn;
+  FEditVoice.FPSSx80_VCED_Params.C_DT1 := dtVal;
+  FEditVoice.FPSSx80_VCED_Params.C_DT2 := trunc(C_DT2.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_SIN_TBL := trunc(C_SIN_TBL.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_AM_EN := trunc(C_AM_EN.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_AR := trunc(C_AR.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_D1R := trunc(C_D1R.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_D1L := trunc(C_D1L.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_D2R := trunc(C_D2R.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_RR := trunc(C_RR.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_SRR := trunc(C_SRR.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_RKS := trunc(C_RKS.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_LKS_LO := trunc(C_LKS_LO.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_LKS_HI := trunc(C_LKS_HI.Position);
+  FEditVoice.FPSSx80_VCED_Params.C_TL := 99 - trunc(C_TL.Position);
 
-  FTmpVoice.FPSSx80_VCED_Params.PMS := trunc(PMS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.AMS := trunc(AMS.Position);
-  FTmpVoice.FPSSx80_VCED_Params.VDT := trunc(VDT.Position);
-  FTmpVoice.FPSSx80_VCED_Params.V := trunc(V.Position);
-  FTmpVoice.FPSSx80_VCED_Params.S := trunc(S.Position);
+  FEditVoice.FPSSx80_VCED_Params.PMS := trunc(PMS.Position);
+  FEditVoice.FPSSx80_VCED_Params.AMS := trunc(AMS.Position);
+  FEditVoice.FPSSx80_VCED_Params.VDT := trunc(VDT.Position);
+  FEditVoice.FPSSx80_VCED_Params.V := trunc(V.Position);
+  FEditVoice.FPSSx80_VCED_Params.S := trunc(S.Position);
 
-  FTmpVoice.Set_VMEM_Params(VCEDtoVMEM(FTmpVoice.Get_VCED_Params));
+  FEditVoice.Set_VMEM_Params(VCEDtoVMEM(FEditVoice.Get_VCED_Params));
 
-  FBank.SetVoice(aVoiceNr, FTmpVoice);
+  FBank.SetVoice(aVoiceNr, FEditVoice);
+  LEDGreen(aVoiceNr);
 end;
 
 function TfrmMain.LoadVoiceNames(aSysExName: string): boolean;

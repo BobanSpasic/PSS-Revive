@@ -1,0 +1,31 @@
+object frmMIDILog: TfrmMIDILog
+  Left = 414
+  Height = 240
+  Top = 255
+  Width = 974
+  Caption = 'MIDI Log'
+  ClientHeight = 240
+  ClientWidth = 974
+  FormStyle = fsSystemStayOnTop
+  Position = poMainFormCenter
+  LCLVersion = '2.2.4.0'
+  object mmMIDIIn: TMemo
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 480
+    Align = alLeft
+    ScrollBars = ssAutoVertical
+    TabOrder = 0
+  end
+  object mmMIDIOut: TMemo
+    Left = 486
+    Height = 240
+    Top = 0
+    Width = 488
+    Align = alClient
+    BorderSpacing.Left = 6
+    ScrollBars = ssAutoVertical
+    TabOrder = 1
+  end
+end

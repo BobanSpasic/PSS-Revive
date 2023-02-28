@@ -25,9 +25,11 @@ uses
 function ContainsPSSx80Data(dmp: TMemoryStream; var StartPos: integer;
   var isBank: boolean): boolean;
 
+function ContainsPSSx80Voice(dmp: TMemoryStream; var VoiceNr: integer): boolean;
+
 function Printable(c: char): char;
 function VCEDHexToStream(aHex: string; var aStream: TMemoryStream): boolean;
-function StreamToVCEDHex(var aStream: TMemoryStream): string;
+function StreamToVCEDHex(const aStream: TMemoryStream): string;
 
 implementation
 
@@ -74,6 +76,28 @@ begin
     StartPos := -1;
 end;
 
+function ContainsPSSx80Voice(dmp: TMemoryStream; var VoiceNr: integer): boolean;
+var
+  h0, h1, h2, h3, h4, h5: byte;
+begin
+  Result := False;
+  dmp.Position := 0;
+  if dmp.Size = 72 then
+  begin
+    h0 := dmp.ReadByte;     // $F0 - SysEx
+    h1 := dmp.ReadByte;     // $43 - Yamaha
+    h2 := dmp.ReadByte;     // $76 - PSSx80
+    h3 := dmp.ReadByte;     // $00
+    h4 := dmp.ReadByte;
+    h5 := dmp.ReadByte;     // Bank, zero-based
+    if (h0 = $F0) and (h1 = $43) and (h2 = $76) and (h3 = $00) and (h4 = $00) then
+    begin
+      Result := True;
+      VoiceNr := h5 + 1;
+    end;
+  end;
+end;
+
 function Printable(c: char): char;
 begin
   if (Ord(c) > 31) and (Ord(c) < 127) then Result := c
@@ -103,7 +127,7 @@ begin
   end;
 end;
 
-function StreamToVCEDHex(var aStream: TMemoryStream): string;
+function StreamToVCEDHex(const aStream: TMemoryStream): string;
 var
   i: integer;
 begin

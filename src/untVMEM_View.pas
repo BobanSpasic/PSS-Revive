@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Grids, StdCtrls,
-  kgrids, untPSSx80Voice, kfunctions;
+  kgrids, untPSSx80Voice, untUtils, kfunctions;
 
 type
 
@@ -201,6 +201,7 @@ const
 var
   c, r: integer;
 begin
+  Unused(aState);
   c := cv[aCol];
   r := unk[aRow];
   if ((r and c) <> 0) and ((Sender as TStringGrid).Cells[aCol, aRow] = '1') then

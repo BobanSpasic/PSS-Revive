@@ -17,7 +17,7 @@ object frmVMEM_View: TfrmVMEM_View
     AnchorSideLeft.Control = sgVMEM
     AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = sgVMEM
-    Left = 548
+    Left = 544
     Height = 752
     Top = 0
     Width = 544

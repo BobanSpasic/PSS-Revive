@@ -9,8 +9,8 @@ uses
   athreads,
       {$ENDIF}
   Forms,
-  tachartlazaruspkg,
-  tachartbgra,
+  {tachartlazaruspkg,
+  tachartbgra, }
   Interfaces, // this includes the LCL widgetset
   untMain,
   untMiniINI,
@@ -23,7 +23,8 @@ uses
   untParConst,
   untPSSx80Voice,
   untPSSx80Bank, 
-  untVMEM_View;
+  untVMEM_View,
+  untLog;
 
 {$R *.res}
 
@@ -34,5 +35,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmVMEM_View, frmVMEM_View);
+  Application.CreateForm(TfrmMIDILog, frmMIDILog);
   Application.Run;
 end.

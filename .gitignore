@@ -1,0 +1,13 @@
+*.o
+*.ppu
+*.compiled
+*.object
+backup*
+*.obj
+lib/*
+lib\*
+*.dll
+*.exe
+*.lintian
+*.bat
+bin*
