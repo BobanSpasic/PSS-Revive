@@ -7,7 +7,6 @@
  Author: Boban Spasic
 
 }
-//ToDo DB auto preview
 //ToDo Save SysEx - bank or single voices
 
 unit untMain;
@@ -46,6 +45,7 @@ type
     alBank5: TAdvLed;
     btDeleteVoiceDB: TButton;
     btStore: TButton;
+    btRandomize: TButton;
     CarrierRR: TLineSeries;
     CarrierSRR: TLineSeries;
     cbAutoPreview: TCheckBox;
@@ -66,6 +66,7 @@ type
     imLogo: TImage;
     imLKS_HI: TImage;
     imLKS_LO: TImage;
+    lbAutoPreviewBank: TLabel;
     lbInfo: TLabel;
     lbMod: TLabel;
     lbCredits1: TLabel;
@@ -114,6 +115,7 @@ type
     mmInfo: TMemo;
     ModulatorRR: TLineSeries;
     ModulatorSRR: TLineSeries;
+    pnLivePreview: TPanel;
     pnCredits: TPanel;
     pnInfo: TPanel;
     S: TECSlider;
@@ -123,6 +125,7 @@ type
     slGen: TShapeLine;
     slMod: TShapeLine;
     slCar: TShapeLine;
+    seAutoPreviewBank: TSpinEdit;
     tsSettings: TTabSheet;
     VDT: TECSlider;
     PMS: TECSlider;
@@ -201,6 +204,7 @@ type
     tsDatabase: TTabSheet;
     procedure alBankClick(Sender: TObject);
     procedure btDeleteVoiceDBClick(Sender: TObject);
+    procedure btRandomizeClick(Sender: TObject);
     procedure btSelectDirClick(Sender: TObject);
     procedure btStoreClick(Sender: TObject);
     procedure cbMidiInChange(Sender: TObject);
@@ -495,6 +499,62 @@ begin
     SQLProxy.CleanTable('VOICES');
     SQLProxy.Vacuum;
   end;
+end;
+
+procedure TfrmMain.btRandomizeClick(Sender: TObject);
+var
+  dtSgn, dtVal: byte;
+begin
+  Randomize;
+  LoadingBank := True; //stop Live Preview
+  M_MUL.Position := trunc((M_MUL.Max + 1) * Random);
+  dtSgn := trunc(Random);
+  dtVal := trunc((M_DT1.Max + 1) * Random);
+  if dtSgn > 0 then dtVal := -dtVal;
+  M_DT1.Position := dtVal;
+  M_DT2.Position := trunc((M_DT2.Max + 1) * Random);
+  M_SIN_TBL.Position := trunc((M_SIN_TBL.Max + 1) * Random);
+  M_AM_EN.Position := trunc((M_AM_EN.Max + 1) * Random);
+
+  M_AR.Position := max(30, trunc((M_AR.Max + 1) * Random));
+  M_D1R.Position := trunc((M_D1R.Max + 1) * Random);
+  M_D1L.Position := trunc((M_D1L.Max + 1) * Random);
+  M_D2R.Position := trunc((M_D2R.Max + 1) * Random);
+  M_RR.Position := trunc((M_RR.Max + 1) * Random);
+  M_SRR.Position := trunc((M_SRR.Max + 1) * Random);
+  M_RKS.Position := trunc((M_RKS.Max + 1) * Random);
+  M_LKS_LO.Position := trunc((M_LKS_LO.Max + 1) * Random);
+  M_LKS_HI.Position := trunc((M_LKS_HI.Max + 1) * Random);
+  M_FB.Position := trunc((M_FB.Max + 1) * Random);
+  M_TL.Position := trunc((M_TL.Max + 1) * Random);
+
+  C_MUL.Position := trunc((C_MUL.Max + 1) * Random);
+  dtSgn := trunc(Random);
+  dtVal := trunc((C_DT1.Max + 1) * Random);
+  if dtSgn > 0 then dtVal := -dtVal;
+  C_DT1.Position := dtVal;
+  C_DT2.Position := trunc((C_DT2.Max + 1) * Random);
+  C_SIN_TBL.Position := trunc((C_SIN_TBL.Max + 1) * Random);
+  C_AM_EN.Position := trunc((C_AM_EN.Max + 1) * Random);
+
+  C_AR.Position := max(30, trunc((C_AR.Max + 1) * Random));
+  C_D1R.Position := trunc((C_D1R.Max + 1) * Random);
+  C_D1L.Position := trunc((C_D1L.Max + 1) * Random);
+  C_D2R.Position := trunc((C_D2R.Max + 1) * Random);
+  C_RR.Position := trunc((C_RR.Max + 1) * Random);
+  C_SRR.Position := trunc((C_SRR.Max + 1) * Random);
+  C_RKS.Position := trunc((C_RKS.Max + 1) * Random);
+  C_LKS_LO.Position := trunc((C_LKS_LO.Max + 1) * Random);
+  C_LKS_HI.Position := trunc((C_LKS_HI.Max + 1) * Random);
+  C_TL.Position := 90;
+
+  PMS.Position := trunc((PMS.Max + 1) * Random);
+  AMS.Position := trunc((AMS.Max + 1) * Random);
+  VDT.Position := trunc((VDT.Max + 1) * Random);
+  V.Position := trunc((V.Max + 1) * Random);
+  LoadingBank := False; //leave one slider to triger the LivePreview if set
+  S.Position := trunc((S.Max + 1) * Random);
+
 end;
 
 procedure TfrmMain.alBankClick(Sender: TObject);
@@ -1025,13 +1085,23 @@ begin
   if cbLivePreview.Checked and not LoadingBank then
   begin
     GUIToVoice(CurrentBank);
-    voiceStream := TMemoryStream.Create;
-    //FBank.GetVoice(CurrentBank, FEditVoice);  - included in GUIToVoice
-    FEditVoice.SysExVoiceToStream(voiceStream);
-    frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
-    MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
-    MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
-    voiceStream.Free;
+    if FMidiOutInt <> -1 then
+    begin
+      try
+        voiceStream := TMemoryStream.Create;
+        FEditVoice.SysExVoiceToStream(CurrentBank, voiceStream);
+        frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
+        MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
+        MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
+      finally
+        voiceStream.Free;
+      end;
+    end
+    else
+    begin
+      ShowMessage('Please set-up the MIDI Output first');
+      pcFilesDatabase.ActivePage := tsSettings;
+    end;
   end;
 end;
 
@@ -1062,13 +1132,23 @@ begin
   if cbLivePreview.Checked and not LoadingBank then
   begin
     GUIToVoice(CurrentBank);
-    voiceStream := TMemoryStream.Create;
-    //FBank.GetVoice(CurrentBank, FEditVoice);   - included in GUIToVoice
-    FEditVoice.SysExVoiceToStream(voiceStream);
-    frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
-    MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
-    MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
-    voiceStream.Free;
+    if FMidiOutInt <> -1 then
+    begin
+      try
+        voiceStream := TMemoryStream.Create;
+        FEditVoice.SysExVoiceToStream(CurrentBank, voiceStream);
+        frmMIDILog.OutLog('Live preview: ' + StreamToVCEDHex(voiceStream));
+        MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
+        MidiOutput.Send(FMidiOutInt, $C0, 99 + CurrentBank, 0);
+      finally
+        voiceStream.Free;
+      end;
+    end
+    else
+    begin
+      ShowMessage('Please set-up the MIDI Output first');
+      pcFilesDatabase.ActivePage := tsSettings;
+    end;
   end;
 end;
 
@@ -1237,9 +1317,10 @@ begin
       voiceStream := TMemoryStream.Create;
       SQLProxy.GetVoice(ID, dmp);
       FTmpVoice.Load_VMEM_FromStream(dmp, 0);
-      FTmpVoice.SysExVoiceToStream(voiceStream);
-      frmMIDILog.OutLog('DB Live preview: ' + StreamToVCEDHex(voiceStream));
+      FTmpVoice.SysExVoiceToStream(seAutoPreviewBank.Value, voiceStream);
       MidiOutput.SendSysEx(FMidiOutInt, voiceStream);
+      MidiOutput.Send(FMidiOutInt, $C0, 99 + seAutoPreviewBank.Value, 0);
+      frmMIDILog.OutLog('DB Auto-preview: ' + StreamToVCEDHex(voiceStream));
     finally
       dmp.Free;
       voiceStream.Free;

@@ -256,25 +256,64 @@ object frmMain: TfrmMain
           Caption = 'tbSeparator6'
           Style = tbsSeparator
         end
-        object cbAutoPreview: TCheckBox
-          AnchorSideLeft.Side = asrBottom
-          AnchorSideTop.Side = asrCenter
-          Left = 206
-          Height = 19
-          Top = 2
-          Width = 80
-          BorderSpacing.Left = 10
-          BorderSpacing.Top = 4
-          BorderSpacing.Right = 10
-          Caption = 'Auto Preview'
-          TabOrder = 1
-        end
         object tbSeparator7: TToolButton
           Left = 198
           Height = 24
           Top = 2
           Caption = 'tbSeparator7'
           Style = tbsSeparator
+        end
+        object pnLivePreview: TPanel
+          Left = 206
+          Height = 22
+          Top = 2
+          Width = 242
+          AutoSize = True
+          ClientHeight = 22
+          ClientWidth = 242
+          TabOrder = 1
+          object cbAutoPreview: TCheckBox
+            AnchorSideLeft.Control = pnLivePreview
+            AnchorSideTop.Control = pnLivePreview
+            AnchorSideTop.Side = asrCenter
+            Left = 11
+            Height = 19
+            Top = 2
+            Width = 80
+            BorderSpacing.Left = 10
+            BorderSpacing.Top = 4
+            BorderSpacing.Right = 10
+            Caption = 'Auto-preview'
+            TabOrder = 0
+          end
+          object lbAutoPreviewBank: TLabel
+            AnchorSideLeft.Control = cbAutoPreview
+            AnchorSideLeft.Side = asrBottom
+            AnchorSideTop.Control = pnLivePreview
+            AnchorSideTop.Side = asrCenter
+            Left = 101
+            Height = 11
+            Top = 6
+            Width = 90
+            Alignment = taRightJustify
+            Caption = 'Auto-preview bank:'
+            ParentColor = False
+          end
+          object seAutoPreviewBank: TSpinEdit
+            AnchorSideLeft.Control = lbAutoPreviewBank
+            AnchorSideLeft.Side = asrBottom
+            AnchorSideTop.Control = pnLivePreview
+            AnchorSideTop.Side = asrCenter
+            Left = 191
+            Height = 19
+            Top = 2
+            Width = 50
+            EditorEnabled = False
+            MaxValue = 5
+            MinValue = 1
+            TabOrder = 1
+            Value = 1
+          end
         end
       end
     end
@@ -4115,7 +4154,7 @@ object frmMain: TfrmMain
     end
     object btStore: TButton
       Left = 256
-      Height = 25
+      Height = 21
       Top = 552
       Width = 75
       Caption = 'Store'
@@ -4129,6 +4168,15 @@ object frmMain: TfrmMain
       Width = 80
       Caption = 'Live Preview'
       TabOrder = 79
+    end
+    object btRandomize: TButton
+      Left = 256
+      Height = 21
+      Top = 584
+      Width = 75
+      Caption = 'Randomize'
+      OnClick = btRandomizeClick
+      TabOrder = 80
     end
   end
   object SelectSysExDirectoryDialog1: TSelectDirectoryDialog

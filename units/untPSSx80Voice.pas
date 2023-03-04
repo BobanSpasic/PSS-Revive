@@ -173,7 +173,7 @@ type
     function GetChecksum: integer;
     function GetVoiceName: string;
     procedure SetVoiceName(aVoiceName: string);
-    procedure SysExVoiceToStream(var aStream: TMemoryStream);
+    procedure SysExVoiceToStream(aBankNr: byte; var aStream: TMemoryStream);
     function CalculateHash: string;
     function Unk_Param: boolean;
   end;
@@ -463,7 +463,7 @@ begin
   end;
 end;
 
-procedure TPSSx80VoiceContainer.SysExVoiceToStream(var aStream: TMemoryStream);
+procedure TPSSx80VoiceContainer.SysExVoiceToStream(aBankNr: byte; var aStream: TMemoryStream);
 begin
   aStream.Clear;
   aStream.Position := 0;
@@ -471,7 +471,7 @@ begin
   aStream.WriteByte($43);
   aStream.WriteByte($76);
   aStream.WriteByte($00);
-  Save_VMEM_ToStream(FPSSx80_VMEM_Params.BANK, aStream);
+  Save_VMEM_ToStream(aBankNr - 1, aStream);
   aStream.WriteByte(GetChecksum);
   aStream.WriteByte($F7);
 end;
