@@ -4,7 +4,7 @@ This project's target is to produce a librarian/editor for Yamaha PSS x80 synths
 ![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev2.png)
 
 ## ToDo
-- MIDI Input
+- Better Envelope graphics
 
 ## Dependencies
 Windows 64 - SQLite3 (dll included in download)
@@ -25,6 +25,7 @@ External components needed to build the PSS Revive are available through Lazarus
 - TAChart
 - BGRA Controls
 - IndustrialStuff
+- TK Controls
 
 ## Linux notes
 libQt5pas distributed with Ubuntu and derivates is know to cause problems. 
