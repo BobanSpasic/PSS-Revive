@@ -1,7 +1,8 @@
 # PSS Revive
 This project's target is to produce a librarian/editor for Yamaha PSS x80 synths.
 
-![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev2.png)
+![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev3.png)
+![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev4.png)
 
 ## ToDo
 - Better Envelope graphics
