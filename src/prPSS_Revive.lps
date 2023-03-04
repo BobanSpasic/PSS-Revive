@@ -220,7 +220,7 @@
         <ComponentName Value="frmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="1304"/>
+        <TopLine Value="4"/>
         <CursorPos X="77" Y="1323"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -302,8 +302,9 @@
         <ComponentName Value="frmVMEM_View"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <CursorPos X="36" Y="9"/>
+        <CursorPos X="3" Y="9"/>
         <UsageCount Value="57"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -477,9 +478,7 @@
       <Unit>
         <Filename Value="../ext_units/midi.pas"/>
         <UnitName Value="MIDI"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="247"/>
         <CursorPos X="25" Y="263"/>
         <UsageCount Value="84"/>
         <Loaded Value="True"/>
@@ -801,7 +800,7 @@
       </Position>
       <Position>
         <Filename Value="untMain.pas"/>
-        <Caret Line="1323" Column="77" TopLine="1304"/>
+        <Caret Line="1323" Column="77" TopLine="4"/>
       </Position>
     </JumpHistory>
     <RunParams>
