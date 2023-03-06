@@ -383,30 +383,41 @@ procedure TfrmMain.OnSysExData(const aDeviceIndex: integer;
   const aStream: TMemoryStream);
 var
   VoiceNr: integer;
+  Received: boolean;
 begin
   Unused(aDeviceIndex);
+  Received := False;
   try
-    FCriticalSection.Acquire;
-    VoiceNr := 1;
-    if aStream.Size = 72 then
-    begin
-      frmMIDILog.InLog(StreamToVCEDHex(aStream));
-      if ContainsPSSx80Voice(aStream, VoiceNr) then
+    try
+      FCriticalSection.Acquire;
+      VoiceNr := 1;
+      if aStream.Size = 72 then
       begin
-        FTmpVoice.Load_VMEM_FromStream(aStream, 0);
-        FBank.SetVoice(VoiceNr, FTmpVoice);
-        FBank.SetVoiceName(VoiceNr, 'Received ' + IntToStr(VoiceNr));
+        frmMIDILog.InLog(StreamToVCEDHex(aStream));
+        if ContainsPSSx80Voice(aStream, VoiceNr) then
+        begin
+          FEditVoice.Load_VMEM_FromStream(aStream, 0);
+          FBank.SetVoice(VoiceNr, FEditVoice);
+          FBank.SetVoiceName(VoiceNr, 'Received ' + IntToStr(VoiceNr));
+          Received := True;
+        end;
+      end;
+      FCriticalSection.Leave;
+    finally
+      if Received then
+      begin
+        if VoiceNr = 5 then VoiceToGUI(VoiceNr);
+        CurrentBank := VoiceNr;
+        LEDYellow(VoiceNr);
+        edSlot01.Text := FBank.GetVoiceName(1);
+        edSlot02.Text := FBank.GetVoiceName(2);
+        edSlot03.Text := FBank.GetVoiceName(3);
+        edSlot04.Text := FBank.GetVoiceName(4);
+        edSlot05.Text := FBank.GetVoiceName(5);
       end;
     end;
-    FCriticalSection.Leave;
-  finally
-    VoiceToGUI(VoiceNr);
-    CurrentBank := VoiceNr;
-    edSlot01.Text := FBank.GetVoiceName(1);
-    edSlot02.Text := FBank.GetVoiceName(2);
-    edSlot03.Text := FBank.GetVoiceName(3);
-    edSlot04.Text := FBank.GetVoiceName(4);
-    edSlot05.Text := FBank.GetVoiceName(5);
+  except
+    on e: Exception do ShowMessage('Exception:' + #13#10 + e.Message);
   end;
 end;
 
@@ -424,8 +435,10 @@ end;
 
 procedure TfrmMain.btStoreClick(Sender: TObject);
 begin
+  LoadingBank := True;
   GUIToVoice(CurrentBank);
   LEDGreen(CurrentBank);
+  LoadingBank := False;
 end;
 
 procedure TfrmMain.RefreshGraph;
@@ -919,6 +932,7 @@ begin
     LoadingBank := True;
     VoiceToGUI(CurrentBank);
     LoadingBank := False;
+    lbFilesClick(Self);
   finally
     ini.Free;
   end;
