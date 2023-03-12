@@ -1,5 +1,8 @@
 # PSS Revive
-This project's target is to produce a librarian/editor for Yamaha PSS x80 synths.
+
+PSS Revive is an editor and librarian for Yamaha PSS x80 synths.
+A important part of the project is also the wiki, as a collection of informations about the PSS-x80 series.
+I use PSS-x80 as a common name for Yamaha PortaSound PSS-480, PSS-580, PSS-680 and PSS-780 synth/keyboards.
 
 Main screen:
 ![PSS-Revive](https://github.com/BobanSpasic/PSS-Revive/blob/main/doc/screenshot_dev3.png)
