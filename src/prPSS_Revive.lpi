@@ -19,7 +19,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="18"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="24"/>
       <StringTable FileDescription="PSS Revive" LegalCopyright="Boban Spasic" OriginalFilename="PSS-Revive" ProductName="PSS Revive"/>
     </VersionInfo>
     <BuildModes>
@@ -145,6 +146,10 @@
         <Filename Value="..\ext_units\versionsupport.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="VersionSupport"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\untConversions.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>

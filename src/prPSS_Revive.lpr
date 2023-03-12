@@ -24,7 +24,8 @@ uses
   untPSSx80Voice,
   untPSSx80Bank, 
   untVMEM_View,
-  untLog;
+  untLog,
+  untConversions;
 
 {$R *.res}
 

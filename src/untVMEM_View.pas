@@ -1,3 +1,15 @@
+{
+ *****************************************************************************
+  See the file COPYING.modifiedLGPL.txt, included in this distribution,
+  for details about the license.
+ *****************************************************************************
+
+ Author: Boban Spasic
+
+ Unit description:
+ VMEM View - table view of a PSS-x80 voice data
+}
+
 unit untVMEM_View;
 
 {$mode ObjFPC}{$H+}

@@ -7,7 +7,6 @@
  Author: Boban Spasic
 
 }
-//ToDo Save SysEx - bank or single voices
 
 unit untMain;
 
@@ -31,7 +30,7 @@ uses
   ,untLinuxMIDI, PortMidi
   {$ENDIF}
   , untPSSx80Voice, untPSSx80Bank, untSQLProxy, untUtils, untPSSx80Utils,
-  untMiniINI, untPopUp, untVMEM_View, untLog;
+  untMiniINI, untPopUp, untVMEM_View, untLog, untConversions;
 
 type
 
@@ -211,6 +210,7 @@ type
     procedure cbMidiOutChange(Sender: TObject);
     procedure cbShowLogChange(Sender: TObject);
     procedure C_LKSChange(Sender: TObject);
+    procedure edSlotChange(Sender: TObject);
     procedure edSlotEditingDone(Sender: TObject);
     procedure edSlotDragDrop(Sender, Source: TObject; X, Y: integer);
     procedure edSlotDragOver(Sender, Source: TObject; X, Y: integer;
@@ -664,6 +664,11 @@ begin
   SliderLinkedEdit(Sender);
 end;
 
+procedure TfrmMain.edSlotChange(Sender: TObject);
+begin
+  (Sender as TLabeledEdit).Hint := (Sender as TLabeledEdit).Text;
+end;
+
 procedure TfrmMain.edSlotEditingDone(Sender: TObject);
 begin
   FBank.SetVoiceName((Sender as TLabeledEdit).Tag, (Sender as TLabeledEdit).Text);
@@ -693,6 +698,8 @@ begin
     edSlot04.Text := FBank.GetVoiceName(4);
     edSlot05.Text := FBank.GetVoiceName(5);
     dmp.Free;
+    VoiceToGUI(1);
+    LEDGreen(1);
   end;
 
   if Source = lbVoices then
@@ -706,6 +713,8 @@ begin
     (Sender as TLabeledEdit).Text :=
       FBank.GetVoiceName((Sender as TLabeledEdit).Tag);
     LEDGreen((Sender as TLabeledEdit).Tag);
+    VoiceToGUI((Sender as TLabeledEdit).Tag);
+    LEDGreen((Sender as TLabeledEdit).Tag);
   end;
 
   if Source = sgDB then
@@ -718,6 +727,8 @@ begin
       FBank.SetVoiceName((Sender as TLabeledEdit).Tag, sgDB.Cells[0, dragItem]);
       (Sender as TLabeledEdit).Text :=
         FBank.GetVoiceName((Sender as TLabeledEdit).Tag);
+      LEDGreen((Sender as TLabeledEdit).Tag);
+      VoiceToGUI((Sender as TLabeledEdit).Tag);
       LEDGreen((Sender as TLabeledEdit).Tag);
     end;
     dmp.Free;
@@ -740,6 +751,7 @@ var
 begin
   sl := TStringList.Create;
   FindSYX(IncludeTrailingPathDelimiter(aFolder), sl);
+  FindImportable(IncludeTrailingPathDelimiter(aFolder), sl);
   lbFiles.Items.Clear;
   lbFiles.Items.AddStrings(sl);
   sl.Free;
@@ -1002,17 +1014,39 @@ procedure TfrmMain.lbFilesClick(Sender: TObject);
 var
   dbg: string;
   Itm: string;
+  sLastClickedFile: string;
 begin
   if lbFiles.ItemIndex <> -1 then
   begin
     lastClickedFile := lbFiles.ItemIndex;
+    sLastClickedFile := lbFiles.Items[LastClickedFile];
     Itm := lbFiles.Items[lbFiles.ItemIndex];
-    LastSysEx := itm;
-    dbg := IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm;
-    lbVoices.Clear;
-    OpenSysEx(dbg);
-    if (lastClickedFile <> -1) and ((lastClickedFile) < lbFiles.Items.Count) then
-      lbFiles.ItemIndex := lastClickedFile;
+    if (LowerCase(ExtractFileExt(itm)) = '.ved') or
+      (LowerCase(ExtractFileExt(itm)) = '.lib') then
+    begin
+      if (LowerCase(ExtractFileExt(itm)) = '.ved') then
+        itm := Ved2Syx(IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm);
+      if (LowerCase(ExtractFileExt(itm)) = '.lib') then
+        itm := BW2Syx(IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm);
+      PopUp('Converting', PopUpDuration);
+      FillFilesList(LastSysExOpenDir);
+    end;
+    if itm <> '' then
+    begin
+      LastSysEx := itm;
+      dbg := IncludeTrailingPathDelimiter(LastSysExOpenDir) + Itm;
+      lbVoices.Clear;
+      OpenSysEx(dbg);
+      if LowerCase(ExtractFileExt(dbg)) = '.mbk' then
+      begin
+        PopUp('Converting', PopUpDuration);
+        FTmpBank.SaveBankToSysExFile(ChangeFileExt(dbg, '.syx'));
+        FillFilesList(LastSysExOpenDir);
+      end;
+      if lbFiles.Items.IndexOf(sLastClickedFile) <> -1 then
+        lbFiles.ItemIndex := lbFiles.Items.IndexOf(sLastClickedFile);
+      LastClickedFile := lbFiles.ItemIndex;
+    end;
   end;
 end;
 
@@ -1045,6 +1079,8 @@ begin
       TLabeledEdit(FindComponent(Format('edSlot%.2d', [i]))).Text :=
         FBank.GetVoiceName(i);
     end;
+    VoiceToGUI(1);
+    LEDGreen(1);
     dmp.Free;
   end;
 end;
@@ -1186,7 +1222,7 @@ end;
 procedure TfrmMain.OpenSysEx(aName: string);
 var
   dmp: TMemoryStream;
-  i: integer;
+  i, j: integer;
   nr: integer;
   isBank: boolean;
   fName: string;
@@ -1203,6 +1239,12 @@ begin
     begin
       if (isBank = False) and (i <> -1) then
       begin
+        for j := 1 to 5 do
+        begin
+          FBank.GetVoice(j, FTmpVoice);
+          FTmpBank.SetVoice(j, FTmpVoice);
+          FTmpBank.SetVoiceName(j, FBank.GetVoiceName(j));
+        end;
         lbVoices.Items.Clear;
         lbVoices.Items.Add(fName);
         FTmpVoice.Load_VMEM_FromStream(dmp, i);

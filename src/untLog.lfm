@@ -6,7 +6,7 @@ object frmMIDILog: TfrmMIDILog
   Caption = 'MIDI Log'
   ClientHeight = 240
   ClientWidth = 974
-  FormStyle = fsSystemStayOnTop
+  FormStyle = fsStayOnTop
   Position = poMainFormCenter
   LCLVersion = '2.2.4.0'
   object mmMIDIIn: TMemo

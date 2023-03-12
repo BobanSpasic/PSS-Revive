@@ -1,3 +1,15 @@
+{
+ *****************************************************************************
+  See the file COPYING.modifiedLGPL.txt, included in this distribution,
+  for details about the license.
+ *****************************************************************************
+
+ Author: Boban Spasic
+
+ Unit description:
+ Form with logs of MIDI in and MIDI out SysEx messages
+}
+
 unit untLog;
 
 {$mode ObjFPC}{$H+}

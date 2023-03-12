@@ -10,20 +10,21 @@ object frmMain: TfrmMain
   Constraints.MinHeight = 700
   Font.Height = 11
   Font.Name = 'Consolas'
+  Font.Pitch = fpFixed
   FormStyle = fsStayOnTop
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object pcFilesDatabase: TPageControl
     Left = 0
     Height = 700
     Top = 0
     Width = 688
-    ActivePage = tsDatabase
+    ActivePage = tsFiles
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object tsFiles: TTabSheet
       Caption = 'Files'
@@ -150,7 +151,7 @@ object frmMain: TfrmMain
         Columns = <        
           item
             Title.Caption = 'Voice'
-            Width = 676
+            Width = 659
           end        
           item
             ReadOnly = True
@@ -168,7 +169,7 @@ object frmMain: TfrmMain
         OnEditingDone = sgDBEditingDone
         OnStartDrag = sgDBStartDrag
         ColWidths = (
-          676
+          659
           0
         )
       end
@@ -559,10 +560,10 @@ object frmMain: TfrmMain
       OnClick = pnSlotClick
       object edSlot01: TLabeledEdit
         Tag = 1
-        Left = 70
+        Left = 60
         Height = 14
         Top = 3
-        Width = 80
+        Width = 110
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
@@ -572,8 +573,11 @@ object frmMain: TfrmMain
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
         LabelSpacing = 10
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
         TextHint = 'Slot empty'
+        OnChange = edSlotChange
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
@@ -584,7 +588,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot01
         AnchorSideTop.Side = asrCenter
-        Left = 170
+        Left = 190
         Height = 24
         Top = -2
         Width = 24
@@ -607,10 +611,10 @@ object frmMain: TfrmMain
       OnClick = pnSlotClick
       object edSlot02: TLabeledEdit
         Tag = 2
-        Left = 70
+        Left = 60
         Height = 14
         Top = 3
-        Width = 80
+        Width = 110
         AutoSelect = False
         AutoSize = False
         EditLabel.Height = 11
@@ -619,8 +623,11 @@ object frmMain: TfrmMain
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
         LabelSpacing = 10
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
         TextHint = 'Slot empty'
+        OnChange = edSlotChange
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
@@ -631,7 +638,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot02
         AnchorSideTop.Side = asrCenter
-        Left = 170
+        Left = 190
         Height = 24
         Top = -2
         Width = 24
@@ -654,10 +661,10 @@ object frmMain: TfrmMain
       OnClick = pnSlotClick
       object edSlot03: TLabeledEdit
         Tag = 3
-        Left = 70
+        Left = 60
         Height = 14
         Top = 3
-        Width = 80
+        Width = 110
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
@@ -667,8 +674,11 @@ object frmMain: TfrmMain
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
         LabelSpacing = 10
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
         TextHint = 'Slot empty'
+        OnChange = edSlotChange
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
@@ -679,7 +689,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot03
         AnchorSideTop.Side = asrCenter
-        Left = 170
+        Left = 190
         Height = 24
         Top = -2
         Width = 24
@@ -702,10 +712,10 @@ object frmMain: TfrmMain
       OnClick = pnSlotClick
       object edSlot04: TLabeledEdit
         Tag = 4
-        Left = 70
+        Left = 60
         Height = 14
         Top = 3
-        Width = 80
+        Width = 110
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
@@ -715,8 +725,11 @@ object frmMain: TfrmMain
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
         LabelSpacing = 10
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
         TextHint = 'Slot empty'
+        OnChange = edSlotChange
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
@@ -727,7 +740,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot04
         AnchorSideTop.Side = asrCenter
-        Left = 170
+        Left = 190
         Height = 24
         Top = -2
         Width = 24
@@ -750,10 +763,10 @@ object frmMain: TfrmMain
       OnClick = pnSlotClick
       object edSlot05: TLabeledEdit
         Tag = 5
-        Left = 70
+        Left = 60
         Height = 14
         Top = 3
-        Width = 80
+        Width = 110
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
@@ -763,8 +776,11 @@ object frmMain: TfrmMain
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
         LabelSpacing = 10
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
         TextHint = 'Slot empty'
+        OnChange = edSlotChange
         OnDragDrop = edSlotDragDrop
         OnDragOver = edSlotDragOver
         OnEditingDone = edSlotEditingDone
@@ -775,7 +791,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = edSlot05
         AnchorSideTop.Side = asrCenter
-        Left = 170
+        Left = 190
         Height = 24
         Top = -2
         Width = 24
