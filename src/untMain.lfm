@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 317
+  Left = 524
   Height = 700
-  Top = 139
+  Top = 64
   Width = 1494
   Caption = 'PSS Revive'
   ClientHeight = 700
@@ -16,7 +16,7 @@ object frmMain: TfrmMain
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '2.2.4.0'
   object pcFilesDatabase: TPageControl
     Left = 0
     Height = 700
@@ -28,23 +28,23 @@ object frmMain: TfrmMain
     TabOrder = 1
     object tsFiles: TTabSheet
       Caption = 'Files'
-      ClientHeight = 676
-      ClientWidth = 680
+      ClientHeight = 672
+      ClientWidth = 678
       object pnFileManager: TPanel
         Left = 0
-        Height = 676
+        Height = 672
         Top = 0
         Width = 360
         Align = alLeft
         BevelColor = clBlack
         ChildSizing.LeftRightSpacing = 10
         ChildSizing.TopBottomSpacing = 5
-        ClientHeight = 676
+        ClientHeight = 672
         ClientWidth = 360
         TabOrder = 0
         object lbFiles: TListBox
           Left = 11
-          Height = 623
+          Height = 619
           Top = 47
           Width = 338
           Align = alClient
@@ -58,6 +58,7 @@ object frmMain: TfrmMain
           OnStartDrag = lbFilesStartDrag
           Options = []
           TabOrder = 0
+          TopIndex = -1
         end
         object sl3: TShapeLine
           Left = 11
@@ -100,27 +101,27 @@ object frmMain: TfrmMain
       end
       object Splitter1: TSplitter
         Left = 360
-        Height = 676
+        Height = 672
         Top = 0
         Width = 8
       end
       object pnVoiceManager: TPanel
         Left = 368
-        Height = 676
+        Height = 672
         Top = 0
-        Width = 312
+        Width = 310
         Align = alClient
         BevelColor = clBlack
         ChildSizing.LeftRightSpacing = 10
         ChildSizing.TopBottomSpacing = 5
-        ClientHeight = 676
-        ClientWidth = 312
+        ClientHeight = 672
+        ClientWidth = 310
         TabOrder = 2
         object lbVoices: TListBox
           Left = 11
-          Height = 664
+          Height = 660
           Top = 6
-          Width = 290
+          Width = 288
           Align = alClient
           BorderStyle = bsNone
           Color = clNone
@@ -131,18 +132,19 @@ object frmMain: TfrmMain
           OnStartDrag = lbVoicesStartDrag
           Options = []
           TabOrder = 0
+          TopIndex = -1
         end
       end
     end
     object tsDatabase: TTabSheet
       Caption = 'Database'
-      ClientHeight = 676
-      ClientWidth = 680
+      ClientHeight = 672
+      ClientWidth = 678
       object sgDB: TStringGrid
         Left = 0
-        Height = 648
+        Height = 644
         Top = 28
-        Width = 680
+        Width = 678
         Align = alClient
         AutoEdit = False
         AutoFillColumns = True
@@ -151,7 +153,7 @@ object frmMain: TfrmMain
         Columns = <        
           item
             Title.Caption = 'Voice'
-            Width = 659
+            Width = 674
           end        
           item
             ReadOnly = True
@@ -169,7 +171,7 @@ object frmMain: TfrmMain
         OnEditingDone = sgDBEditingDone
         OnStartDrag = sgDBStartDrag
         ColWidths = (
-          659
+          674
           0
         )
       end
@@ -177,7 +179,7 @@ object frmMain: TfrmMain
         Left = 0
         Height = 28
         Top = 0
-        Width = 680
+        Width = 678
         ButtonHeight = 24
         ButtonWidth = 24
         Caption = 'Database'
@@ -229,11 +231,11 @@ object frmMain: TfrmMain
         end
         object tbpnSearch: TPanel
           Left = 106
-          Height = 22
+          Height = 28
           Top = 2
           Width = 92
           AutoSize = True
-          ClientHeight = 22
+          ClientHeight = 28
           ClientWidth = 92
           TabOrder = 0
           object tbSearch: TEdit
@@ -241,7 +243,7 @@ object frmMain: TfrmMain
             AnchorSideTop.Control = tbpnSearch
             AnchorSideTop.Side = asrCenter
             Left = 11
-            Height = 19
+            Height = 25
             Top = 2
             Width = 80
             BorderSpacing.Left = 10
@@ -266,21 +268,21 @@ object frmMain: TfrmMain
         end
         object pnLivePreview: TPanel
           Left = 206
-          Height = 22
+          Height = 28
           Top = 2
-          Width = 242
+          Width = 305
           AutoSize = True
-          ClientHeight = 22
-          ClientWidth = 242
+          ClientHeight = 28
+          ClientWidth = 305
           TabOrder = 1
           object cbAutoPreview: TCheckBox
             AnchorSideLeft.Control = pnLivePreview
             AnchorSideTop.Control = pnLivePreview
             AnchorSideTop.Side = asrCenter
             Left = 11
-            Height = 19
-            Top = 2
-            Width = 80
+            Height = 23
+            Top = 3
+            Width = 107
             BorderSpacing.Left = 10
             BorderSpacing.Top = 4
             BorderSpacing.Right = 10
@@ -292,10 +294,10 @@ object frmMain: TfrmMain
             AnchorSideLeft.Side = asrBottom
             AnchorSideTop.Control = pnLivePreview
             AnchorSideTop.Side = asrCenter
-            Left = 101
-            Height = 11
-            Top = 6
-            Width = 90
+            Left = 128
+            Height = 14
+            Top = 7
+            Width = 126
             Alignment = taRightJustify
             Caption = 'Auto-preview bank:'
             ParentColor = False
@@ -305,8 +307,8 @@ object frmMain: TfrmMain
             AnchorSideLeft.Side = asrBottom
             AnchorSideTop.Control = pnLivePreview
             AnchorSideTop.Side = asrCenter
-            Left = 191
-            Height = 19
+            Left = 254
+            Height = 25
             Top = 2
             Width = 50
             EditorEnabled = False
@@ -320,15 +322,15 @@ object frmMain: TfrmMain
     end
     object tsSettings: TTabSheet
       Caption = 'Settings'
-      ClientHeight = 676
-      ClientWidth = 680
+      ClientHeight = 672
+      ClientWidth = 678
       object lbMidiIn: TLabel
         AnchorSideLeft.Control = cbMidiIn
         AnchorSideBottom.Control = cbMidiIn
         Left = 40
-        Height = 11
-        Top = 35
-        Width = 40
+        Height = 14
+        Top = 32
+        Width = 56
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 10
         Caption = 'MIDI In:'
@@ -340,9 +342,9 @@ object frmMain: TfrmMain
         AnchorSideLeft.Control = cbMidiIn
         AnchorSideBottom.Control = cbMidiOut
         Left = 40
-        Height = 11
-        Top = 88
-        Width = 45
+        Height = 14
+        Top = 85
+        Width = 63
         Anchors = [akLeft, akBottom]
         BorderSpacing.Bottom = 10
         Caption = 'MIDI Out:'
@@ -353,11 +355,11 @@ object frmMain: TfrmMain
       object cbMidiIn: TComboBox
         Cursor = crHandPoint
         Left = 40
-        Height = 19
+        Height = 27
         Top = 56
         Width = 320
         Color = clNone
-        ItemHeight = 11
+        ItemHeight = 0
         OnChange = cbMidiInChange
         TabOrder = 0
       end
@@ -365,11 +367,11 @@ object frmMain: TfrmMain
         AnchorSideLeft.Control = cbMidiIn
         Cursor = crHandPoint
         Left = 40
-        Height = 19
+        Height = 27
         Top = 109
         Width = 320
         Color = clNone
-        ItemHeight = 11
+        ItemHeight = 0
         OnChange = cbMidiOutChange
         TabOrder = 1
       end
@@ -377,7 +379,7 @@ object frmMain: TfrmMain
         AnchorSideRight.Control = cbMidiIn
         AnchorSideRight.Side = asrBottom
         Left = 310
-        Height = 19
+        Height = 25
         Top = 200
         Width = 50
         Anchors = [akTop, akRight]
@@ -388,10 +390,10 @@ object frmMain: TfrmMain
         AnchorSideTop.Control = seFontSize
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = seFontSize
-        Left = 250
-        Height = 11
-        Top = 204
-        Width = 50
+        Left = 230
+        Height = 14
+        Top = 205
+        Width = 70
         Anchors = [akTop, akRight]
         BorderSpacing.Right = 10
         Caption = 'Font Size:'
@@ -418,19 +420,19 @@ object frmMain: TfrmMain
         TabOrder = 4
         object lbCredits1: TLabel
           Left = 148
-          Height = 11
+          Height = 14
           Top = 8
-          Width = 40
+          Width = 56
           Caption = 'Credits:'
           ParentColor = False
         end
         object lnkCredits2: TECLink
           AnchorSideLeft.Control = lbMidiIn
           Left = 16
-          Height = 11
+          Height = 14
           Hint = 'https://icons8.com/'
           Top = 40
-          Width = 30
+          Width = 42
           Caption = 'Icons8'
           ColorHovered = clActiveCaption
           ParentShowHint = False
@@ -440,10 +442,10 @@ object frmMain: TfrmMain
         object lnkCredits3: TECLink
           AnchorSideLeft.Control = lbMidiIn
           Left = 16
-          Height = 11
+          Height = 14
           Hint = 'https://www.lazarus-ide.org/'
           Top = 56
-          Width = 55
+          Width = 77
           Caption = 'Lazarus IDE'
           ColorHovered = clActiveCaption
           ParentShowHint = False
@@ -455,7 +457,7 @@ object frmMain: TfrmMain
         AnchorSideRight.Control = cbMidiIn
         AnchorSideRight.Side = asrBottom
         Left = 310
-        Height = 19
+        Height = 25
         Top = 228
         Width = 50
         Anchors = [akTop, akRight]
@@ -467,10 +469,10 @@ object frmMain: TfrmMain
         AnchorSideTop.Control = sePopUpDur
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = sePopUpDur
-        Left = 225
-        Height = 11
-        Top = 232
-        Width = 75
+        Left = 195
+        Height = 14
+        Top = 233
+        Width = 105
         Anchors = [akTop, akRight]
         BorderSpacing.Right = 10
         Caption = 'PopUp Duration:'
@@ -479,10 +481,10 @@ object frmMain: TfrmMain
       object lnkVisit: TECLink
         AnchorSideLeft.Control = lbMidiIn
         Left = 40
-        Height = 30
+        Height = 36
         Hint = 'https://github.com/BobanSpasic/PSS-Revive'
         Top = 624
-        Width = 378
+        Width = 486
         Caption = 'Visit PSS-Revive on the web'
         ColorHovered = clActiveCaption
         Font.Color = 10400041
@@ -496,9 +498,9 @@ object frmMain: TfrmMain
       end
       object cbShowLog: TCheckBox
         Left = 40
-        Height = 19
+        Height = 23
         Top = 142
-        Width = 95
+        Width = 132
         Caption = 'Show log window'
         OnChange = cbShowLogChange
         TabOrder = 6
@@ -513,9 +515,9 @@ object frmMain: TfrmMain
         TabOrder = 7
         object lbInfo: TLabel
           Left = 148
-          Height = 11
+          Height = 14
           Top = 8
-          Width = 25
+          Width = 35
           Caption = 'Info:'
           ParentColor = False
         end
@@ -523,8 +525,8 @@ object frmMain: TfrmMain
           AnchorSideTop.Control = lbInfo
           AnchorSideTop.Side = asrBottom
           Left = 1
-          Height = 112
-          Top = 25
+          Height = 109
+          Top = 28
           Width = 318
           Align = alBottom
           Anchors = [akTop, akLeft, akRight, akBottom]
@@ -567,8 +569,8 @@ object frmMain: TfrmMain
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
-        EditLabel.Height = 11
-        EditLabel.Width = 35
+        EditLabel.Height = 14
+        EditLabel.Width = 49
         EditLabel.Caption = 'Slot 01'
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
@@ -617,8 +619,8 @@ object frmMain: TfrmMain
         Width = 110
         AutoSelect = False
         AutoSize = False
-        EditLabel.Height = 11
-        EditLabel.Width = 35
+        EditLabel.Height = 14
+        EditLabel.Width = 49
         EditLabel.Caption = 'Slot 02'
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
@@ -668,8 +670,8 @@ object frmMain: TfrmMain
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
-        EditLabel.Height = 11
-        EditLabel.Width = 35
+        EditLabel.Height = 14
+        EditLabel.Width = 49
         EditLabel.Caption = 'Slot 03'
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
@@ -719,8 +721,8 @@ object frmMain: TfrmMain
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
-        EditLabel.Height = 11
-        EditLabel.Width = 35
+        EditLabel.Height = 14
+        EditLabel.Width = 49
         EditLabel.Caption = 'Slot 04'
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
@@ -770,8 +772,8 @@ object frmMain: TfrmMain
         AutoSelect = False
         AutoSize = False
         DragMode = dmAutomatic
-        EditLabel.Height = 11
-        EditLabel.Width = 35
+        EditLabel.Height = 14
+        EditLabel.Width = 49
         EditLabel.Caption = 'Slot 05'
         EditLabel.ParentColor = False
         LabelPosition = lpLeft
@@ -2187,13 +2189,13 @@ object frmMain: TfrmMain
       Top = 46
       Width = 288
       Caption = 'LKS'
-      ClientHeight = 144
-      ClientWidth = 284
+      ClientHeight = 145
+      ClientWidth = 286
       TabOrder = 42
       object imLKS_LO: TImage
         AnchorSideLeft.Side = asrBottom
         Cursor = crHandPoint
-        Left = 3
+        Left = 4
         Height = 140
         Top = 0
         Width = 140
@@ -2206,7 +2208,7 @@ object frmMain: TfrmMain
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = imLKS_LO
         Cursor = crHandPoint
-        Left = 143
+        Left = 144
         Height = 140
         Top = 0
         Width = 140
@@ -2225,8 +2227,8 @@ object frmMain: TfrmMain
       Width = 244
       BorderSpacing.Left = 20
       Caption = 'Envelope'
-      ClientHeight = 144
-      ClientWidth = 240
+      ClientHeight = 145
+      ClientWidth = 242
       TabOrder = 43
       object Graph: TChart
         Left = 0
@@ -4139,18 +4141,18 @@ object frmMain: TfrmMain
     end
     object lbMod: TLabel
       Left = 19
-      Height = 11
+      Height = 14
       Top = 230
-      Width = 45
+      Width = 63
       Caption = 'Modulator'
       ParentColor = False
     end
     object lbCar: TLabel
       AnchorSideTop.Side = asrBottom
       Left = 19
-      Height = 11
+      Height = 14
       Top = 382
-      Width = 35
+      Width = 49
       BorderSpacing.Bottom = 2
       Caption = 'Carrier'
       ParentColor = False
@@ -4179,9 +4181,9 @@ object frmMain: TfrmMain
     end
     object cbLivePreview: TCheckBox
       Left = 256
-      Height = 19
+      Height = 23
       Top = 656
-      Width = 80
+      Width = 110
       Caption = 'Live Preview'
       TabOrder = 79
     end

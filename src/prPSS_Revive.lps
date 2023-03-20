@@ -2,7 +2,7 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="12"/>
-    <BuildModes Active="Release Win64">
+    <BuildModes Active="Release Win32">
       <Item Name="Release FreeBSD QT5">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="qt5"/>
@@ -228,8 +228,8 @@
         <Filename Value="../units/untUtils.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="39"/>
-        <CursorPos X="64" Y="69"/>
+        <TopLine Value="91"/>
+        <CursorPos X="29" Y="103"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit>
@@ -256,7 +256,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="2" Y="9"/>
+        <TopLine Value="586"/>
+        <CursorPos X="7" Y="797"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -316,7 +317,7 @@
         <EditorIndex Value="7"/>
         <TopLine Value="326"/>
         <CursorPos X="24" Y="344"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="120"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -324,7 +325,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
         <CursorPos X="3" Y="175"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="120"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -335,9 +336,8 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="5"/>
         <CursorPos X="39" Y="10"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="78"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="untLog.pas"/>
@@ -347,9 +347,8 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <CursorPos X="55" Y="10"/>
-        <UsageCount Value="57"/>
+        <UsageCount Value="58"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../ext_units/versionsupport.pas"/>
@@ -358,7 +357,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="203"/>
         <CursorPos X="33" Y="225"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="52"/>
       </Unit>
       <Unit>
         <Filename Value="../units/untConversions.pas"/>
@@ -366,7 +365,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="63"/>
         <CursorPos X="33" Y="84"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -596,9 +595,9 @@
         <Filename Value="/lazarus/lcl/grids.pas"/>
         <UnitName Value="Grids"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="15"/>
-        <CursorPos Y="48"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="4422"/>
+        <CursorPos Y="4440"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="/lazarus/lcl/include/dragmanager.inc"/>
@@ -622,7 +621,7 @@
         <UsageCount Value="7"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/maskedit.pp"/>
+        <Filename Value="/lazarus/lcl/maskedit.pp"/>
         <UnitName Value="MaskEdit"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="736"/>
@@ -630,7 +629,7 @@
         <UsageCount Value="7"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/customnotebook.inc"/>
+        <Filename Value="/lazarus/lcl/include/customnotebook.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="483"/>
         <CursorPos Y="502"/>
@@ -645,14 +644,14 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/fpc/3.2.2/source/rtl/objpas/classes/classesh.inc"/>
+        <Filename Value="/lazarus/fpc/3.2.2/source/rtl/objpas/classes/classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1906"/>
         <CursorPos X="15" Y="1921"/>
         <UsageCount Value="7"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/filectrl.pp"/>
+        <Filename Value="/lazarus/lcl/filectrl.pp"/>
         <UnitName Value="FileCtrl"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="227"/>
@@ -660,15 +659,7 @@
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/grids.pas"/>
-        <UnitName Value="Grids"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="4422"/>
-        <CursorPos Y="4440"/>
-        <UsageCount Value="10"/>
-      </Unit>
-      <Unit>
-        <Filename Value="../../../../../../lazarus/fpc/3.2.2/source/packages/winunits-base/src/mmsystem.pp"/>
+        <Filename Value="/lazarus/fpc/3.2.2/source/packages/winunits-base/src/mmsystem.pp"/>
         <UnitName Value="MMSystem"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1244"/>
@@ -676,21 +667,21 @@
         <UsageCount Value="7"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/control.inc"/>
+        <Filename Value="/lazarus/lcl/include/control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2941"/>
         <CursorPos Y="2959"/>
         <UsageCount Value="9"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/wincontrol.inc"/>
+        <Filename Value="/lazarus/lcl/include/wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="5376"/>
         <CursorPos Y="5394"/>
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/lclmessageglue.pas"/>
+        <Filename Value="/lazarus/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="94"/>
@@ -698,28 +689,28 @@
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/interfaces/win32/win32callback.inc"/>
+        <Filename Value="/lazarus/lcl/interfaces/win32/win32callback.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2755"/>
         <CursorPos Y="2774"/>
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/application.inc"/>
+        <Filename Value="/lazarus/lcl/include/application.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1363"/>
         <CursorPos Y="1382"/>
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/interfacebase.inc"/>
+        <Filename Value="/lazarus/lcl/include/interfacebase.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="36"/>
         <CursorPos Y="55"/>
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/interfaces/win32/win32proc.pp"/>
+        <Filename Value="/lazarus/lcl/interfaces/win32/win32proc.pp"/>
         <UnitName Value="Win32Proc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1224"/>
@@ -727,20 +718,20 @@
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/lcl/include/rasterimage.inc"/>
+        <Filename Value="/lazarus/lcl/include/rasterimage.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="193"/>
         <CursorPos Y="211"/>
         <UsageCount Value="8"/>
       </Unit>
       <Unit>
-        <Filename Value="../../../../../../lazarus/fpc/3.2.2/source/rtl/objpas/sysutils/finah.inc"/>
+        <Filename Value="/lazarus/fpc/3.2.2/source/rtl/objpas/sysutils/finah.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="25"/>
         <UsageCount Value="9"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="27">
+    <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="untMain.pas"/>
         <Caret Line="1002" Column="71" TopLine="990"/>
@@ -852,6 +843,14 @@
       <Position>
         <Filename Value="untMain.pas"/>
         <Caret Line="670" Column="65" TopLine="667"/>
+      </Position>
+      <Position>
+        <Filename Value="untMain.pas"/>
+        <Caret Line="9" Column="2"/>
+      </Position>
+      <Position>
+        <Filename Value="untMain.pas"/>
+        <Caret Line="1019" Column="3" TopLine="1013"/>
       </Position>
     </JumpHistory>
     <RunParams>

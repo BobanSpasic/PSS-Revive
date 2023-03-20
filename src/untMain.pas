@@ -795,7 +795,6 @@ begin
   finally
     ini.Free;
   end;
-
   if FMidiIsActive then
   begin
     MidiInput.CloseAll;

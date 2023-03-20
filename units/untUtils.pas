@@ -82,8 +82,9 @@ procedure FindSYX(Directory: string; var sl: TStringList);
 var
   sr: TSearchRec;
 begin
-  if FindFirst(Directory + '*.syx', faAnyFile, sr) = 0 then
+  if FindFirst(Directory + '*', faAnyFile, sr) = 0 then
     repeat
+      if LowerCase(sr.Name).Contains('.syx') then
       sl.Add(ExtractFileName(sr.Name));
     until FindNext(sr) <> 0;
   FindClose(sr);
@@ -93,18 +94,11 @@ procedure FindImportable(Directory: string; var sl: TStringList);
 var
   sr: TSearchRec;
 begin
-  if FindFirst(Directory + '*.ved', faAnyFile, sr) = 0 then
+  if FindFirst(Directory + '*', faAnyFile, sr) = 0 then
     repeat
-      sl.Add(ExtractFileName(sr.Name));
-    until FindNext(sr) <> 0;
-  FindClose(sr);
-  if FindFirst(Directory + '*.mbk', faAnyFile, sr) = 0 then
-    repeat
-      sl.Add(ExtractFileName(sr.Name));
-    until FindNext(sr) <> 0;
-  FindClose(sr);
-  if FindFirst(Directory + '*.lib', faAnyFile, sr) = 0 then
-    repeat
+      if LowerCase(sr.Name).Contains('.ved') or
+      LowerCase(sr.Name).Contains('.mbk') or
+      LowerCase(sr.Name).Contains('.lib')then
       sl.Add(ExtractFileName(sr.Name));
     until FindNext(sr) <> 0;
   FindClose(sr);
